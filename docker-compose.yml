@@ -1,0 +1,54 @@
+version: '3.8'
+
+volumes:
+  db-store:
+  flask-store:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./infra/flask/Dockerfile
+    ports: 
+      - "5000:5000"
+    volumes:
+      - type: bind
+        source: ./src
+        target: /workspace
+      - type: volume
+        source: flask-store
+        target: /root/.flask
+        volume:
+          nocopy: true
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - FLASK_DEBUG=${FLASK_DEBUG:-1}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-mydatabase}
+      - DB_USERNAME=${DB_USERNAME:-user}
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+
+  db:
+    build:
+      context: ./infra/mysql
+    ports:
+      - target: 3306
+        published: ${DB_PUBLISHED_PORT:-3306}
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+      - type: bind
+        source: ./infra/mysql/my.cnf
+        target: /etc/mysql/my.cnf
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-mydatabase}
+      - MYSQL_USER=${DB_USERNAME:-user}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-password}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
