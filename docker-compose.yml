@@ -3,13 +3,14 @@ version: '3.8'
 volumes:
   db-store:
   flask-store:
+  react-store:
 
 services:
   app:
     build:
       context: .
       dockerfile: ./infra/flask/Dockerfile
-    ports: 
+    ports:
       - "5000:5000"
     volumes:
       - type: bind
@@ -52,3 +53,17 @@ services:
       - MYSQL_USER=${DB_USERNAME:-user}
       - MYSQL_PASSWORD=${DB_PASSWORD:-password}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
+
+  # react:
+  #   build:
+  #     context: .
+  #     dockerfile: ./infra/react/Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - type: bind
+  #       source: ./src
+  #       target: /app/src
+  #     - type: volume
+  #       source: react-store
+  #       target: /app/node_modules

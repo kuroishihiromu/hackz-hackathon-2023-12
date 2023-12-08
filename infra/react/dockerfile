@@ -1,0 +1,23 @@
+# #Node.jsの最新版を記載
+# FROM node:16.14.0
+
+# #コンテナ内の作業ディレクトリを記載
+# WORKDIR /workspace
+
+# # 依存関係ファイルをコピー
+# COPY package*.json ./
+
+# # 依存関係のインストール
+# RUN npm install
+
+# # アプリケーションのソースコードをコピー
+# COPY . .
+
+# # ビルド
+# RUN npm run build
+
+# # ポートを公開
+# EXPOSE 3000
+
+# # アプリケーションを起動
+# CMD ["npm", "start"]
