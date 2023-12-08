@@ -1,5 +1,5 @@
 Flask
 sqlalchemy
 mysql-connector-python
-Flask-sqlalchemy
+Flask-SQLAlchemy
 mysqlclient  # MySQL用のPythonドライバ

@@ -9,7 +9,7 @@ import os
 app = Flask(__name__)
 
 # connect to database ##
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://user:password@db:3306/mydatabase'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://user:password@db:3306/mydatabase'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #make SQLObject
@@ -33,61 +33,22 @@ class users(db.Model):
     is_bot = db.Column(db.Boolean, default=True,nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-class cluster_user(db.Model):
-    __tablename__ = 'cluster_user'
+class groupe_user(db.Model):
+    __tablename__ = 'groupe_user'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    cluster_id = db.Column(db.Integer, db.ForeignKey('cluster.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    groupe_id = db.Column(db.Integer, db.ForeignKey('groupes.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-class clusters(db.Model):
-    __tablename__ = 'clusters'
+class groupes(db.Model):
+    __tablename__ = 'groupes'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     middle_wake_up_time = db.Column(db.Time, nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
 
-
-
 @app.route('/')
-def hello_hiromu():
-    return 'Hello, asdhiromu!'
+def hello():
+    db.create_all()
+    return 'Hello, World!'
 
-@app.route('/test')
-def hello_tomokazu():
-    # 関数の使用例
-    DB_HOST = 'db'
-    DB_PORT = 3306
-    DB_DATABASE = 'mydatabase'
-    DB_USERNAME = 'user'
-    DB_PASSWORD = 'password'
-
-    connection = connect_to_database(DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD)
-
-    return 'Hello, tomokazu!'
-
-def connect_to_database(host, port, database, username, password):
-    """MySQLデータベースへの接続を試み、接続オブジェクトを返す。同時にテストテーブルを作成する。"""
-    try:
-        # データベース接続の確立
-        connection = mysql.connector.connect(
-            host=host,
-            port=port,
-            database=database,
-            user=username,
-            password=password
-        )
-
-        if connection.is_connected():
-            print(f"MySQLサーバーに接続しました: {connection.get_server_info()}")
-
-            # テストテーブルの作成
-            cursor = connection.cursor()
-            cursor.execute("CREATE TABLE IF NOT EXISTS test_table (id INT autoincrement PRIMARY KEY, name VARCHAR(255) NOT NULL)")
-            print("テストテーブルを作成しました。")
-
-            return connection
-
-    except Error as e:
-        print(f"データベース接続中にエラーが発生しました: {e}")
-        return None
