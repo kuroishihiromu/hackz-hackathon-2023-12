@@ -33,15 +33,15 @@ class users(db.Model):
     is_bot = db.Column(db.Boolean, default=True,nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-class groupe_user(db.Model):
-    __tablename__ = 'groupe_user'
+class cluster_user(db.Model):
+    __tablename__ = 'cluster_user'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    groupe_id = db.Column(db.Integer, db.ForeignKey('groupes.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    cluster_id = db.Column(db.Integer, db.ForeignKey('clusters.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-class groupes(db.Model):
-    __tablename__ = 'groupes'
+class clusters(db.Model):
+    __tablename__ = 'clusters'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     middle_wake_up_time = db.Column(db.Time, nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
