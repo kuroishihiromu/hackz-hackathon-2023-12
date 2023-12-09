@@ -1,54 +1,50 @@
 from flask import Flask
-import mysql.connector
-from flask_sqlalchemy import SQLAlchemy
-from mysql.connector import Error
-from datetime import datetime
-import os
+from flask_migrate import Migrate
+
+#自作のdatabaseモジュールをインポート
+from database.models import *
+from database.seeder import *
+from database import init_db
+
 
 
 app = Flask(__name__)
 
-# connect to database ##
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://user:password@db:3306/mydatabase'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-#make SQLObject
-db = SQLAlchemy(app)
-
-class settings(db.Model):
-    __tablename__ = 'settings'
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True)  
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    tomorrow_wake_up_time = db.Column(db.Time, nullable=False)
-    yesterday_sleep_level = db.Column(db.Integer,nullable=False)
-    setting_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
-
-class users(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    device_id = db.Column(db.VARCHAR(12),nullable=False,unique= True)
-    name = db.Column(db.VARCHAR(24),nullable=False)
-    email = db.Column(db.VARCHAR(24),nullable=False,unique= True)
-    password = db.Column(db.VARCHAR(12),nullable=False)
-    is_bot = db.Column(db.Boolean, default=True,nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
-
-class groupe_user(db.Model):
-    __tablename__ = 'groupe_user'
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    groupe_id = db.Column(db.Integer, db.ForeignKey('groupes.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
-
-class groupes(db.Model):
-    __tablename__ = 'groupes'
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    middle_wake_up_time = db.Column(db.Time, nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+init_db(app) #環境変数の設定
+db.init_app(app) #DBの初期化
+migrate = Migrate(app, db) #マイグレーションの設定
 
 
 @app.route('/')
 def hello():
-    db.create_all()
+    # db.create_all()
+    database_seeder(app)
     return 'Hello, World!'
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+#テスト用のデータを一括挿入する。
+def db_seeder():
+    from faker import Faker
+    import random
+    
+    faker = Faker('ja_JP')
+    users = []
+    
+    for _ in range(100):
+        user = User(
+            device_id = faker.random_number(digits=12),
+            name = faker.name(),
+            email = faker.email(),
+            password = faker.password(),
+            is_bot = random.choice([True, False])
+        )
+        users.append(user)
+
+    # 一度にすべてのユーザーを保存
+    db.session.bulk_save_objects(users)
+    db.session.commit()

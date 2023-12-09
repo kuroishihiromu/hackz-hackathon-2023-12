@@ -1,0 +1,42 @@
+from . import db
+from datetime import datetime, time
+
+class Settings(db.Model):
+    __tablename__ = 'settings'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)  
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    tomorrow_wake_up_time = db.Column(db.Time, nullable=False)
+    yesterday_sleep_level = db.Column(db.Integer,nullable=False)
+    setting_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    device_id = db.Column(db.VARCHAR(12),nullable=False,unique= True)
+    name = db.Column(db.VARCHAR(24),nullable=False)
+    email = db.Column(db.VARCHAR(48),nullable=False,unique= True)
+    password = db.Column(db.VARCHAR(12),nullable=False)
+    is_bot = db.Column(db.Boolean, default=True,nullable=False)
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    
+    # ユーザーに関連する設定（一対多のリレーションシップ）
+    settings = db.relationship('Settings', backref='user', lazy=True)
+    # ユーザーが属するクラスタ（多対多のリレーションシップ）
+    clusters = db.relationship('Clusters', secondary='cluster_user', backref=db.backref('users', lazy='dynamic'))
+
+class ClusterUser(db.Model):
+    __tablename__ = 'cluster_user'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    cluster_id = db.Column(db.Integer, db.ForeignKey('clusters.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
+class Clusters(db.Model):
+    __tablename__ = 'clusters'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    middle_wake_up_time = db.Column(db.Time, nullable=False)
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    
+    # Userモデルで逆方向の関係性が既に定義済みなので、こちらは定義しない
+
+

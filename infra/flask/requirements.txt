@@ -2,4 +2,6 @@ Flask
 sqlalchemy
 mysql-connector-python
 Flask-SQLAlchemy
+Flask-Migrate
 mysqlclient  # MySQL用のPythonドライバ
+Faker
