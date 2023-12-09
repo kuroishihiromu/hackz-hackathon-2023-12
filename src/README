@@ -1,0 +1,22 @@
+### Flask App Database Migration
+モデルクラスに変更があった場合にデータベースを更新する
+マイグレーション手順。
+
+##### 1. appコンテナに入る
+
+appコンテナに入る。
+
+```bash
+docker-compose exec -it app bash
+
+##### 2. 差分を検出しmigrationファイル作成(変更がない場合スキップ)
+
+モデルクラスに変更がある場合、差分を検出しmigrationファイルを生成。
+
+```bash
+flask db migrate -m "ここに変更内容を記述"
+
+##### 3. Migrationの実行
+```bash
+flask db upgrade
+
