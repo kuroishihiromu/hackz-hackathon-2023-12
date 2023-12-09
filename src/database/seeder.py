@@ -1,5 +1,5 @@
 # モデルのインポート
-from datetime import time
+from datetime import time, timedelta
 from .models import *
 from faker import Faker
 import random
@@ -9,8 +9,6 @@ def database_seeder(app):
         
         faker = Faker('ja_JP')
         users = []
-        clusters = []
-        settings = []
         
         for _ in range(100):
             
@@ -24,6 +22,21 @@ def database_seeder(app):
             users.append(user)
             
             # 一人のユーザーに対して設定を作成
+            settings = []
+            for i in range(10):
+                # 開始時間と終了時間を定義
+                start_time = time(5, 30)
+                end_time = time(12, 0)
+
+                # ランダムな時間を生成
+                random_minutes = random.randint(0, (end_time.hour - start_time.hour) * 60 + (end_time.minute - start_time.minute))
+                random_time = start_time + timedelta(minutes=random_minutes)
+                
+                setting = Settings(
+                    user_id = user.id,
+                    tomorrow_wake_up_time = random_time,
+                    yesterday_sleep_level = random.randint(1, 3)
+                )
             
         db.session.add_all(users)
         db.session.commit()

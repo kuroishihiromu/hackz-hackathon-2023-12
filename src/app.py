@@ -24,27 +24,3 @@ def hello():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-
-
-#テスト用のデータを一括挿入する。
-def db_seeder():
-    from faker import Faker
-    import random
-    
-    faker = Faker('ja_JP')
-    users = []
-    
-    for _ in range(100):
-        user = User(
-            device_id = faker.random_number(digits=12),
-            name = faker.name(),
-            email = faker.email(),
-            password = faker.password(),
-            is_bot = random.choice([True, False])
-        )
-        users.append(user)
-
-    # 一度にすべてのユーザーを保存
-    db.session.bulk_save_objects(users)
-    db.session.commit()

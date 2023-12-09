@@ -1,23 +1,17 @@
-# #Node.jsの最新版を記載
-# FROM node:16.14.0
+#Node.jsの最新版を記載
+FROM node:16.14.0
 
-# #コンテナ内の作業ディレクトリを記載
-# WORKDIR /workspace
+# コンテナ内で作業するディレクトリを指定
+WORKDIR /usr/src/app
 
-# # 依存関係ファイルをコピー
-# COPY package*.json ./
+# package.jsonとyarn.lockを/usr/src/appにコピー
+COPY ["package.json", "yarn.lock", "./"]
 
-# # 依存関係のインストール
-# RUN npm install
+# パッケージをインストール
+RUN yarn install
 
-# # アプリケーションのソースコードをコピー
-# COPY . .
+# ファイルを全部作業用ディレクトリにコピー
+COPY . .
 
-# # ビルド
-# RUN npm run build
-
-# # ポートを公開
-# EXPOSE 3000
-
-# # アプリケーションを起動
-# CMD ["npm", "start"]
+# コンテナを起動する際に実行されるコマンド
+ENTRYPOINT [ "yarn", "start" ]

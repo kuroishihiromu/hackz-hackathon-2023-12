@@ -54,16 +54,16 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD:-password}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
 
-  # react:
-  #   build:
-  #     context: .
-  #     dockerfile: ./infra/react/Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - type: bind
-  #       source: ./src
-  #       target: /app/src
-  #     - type: volume
-  #       source: react-store
-  #       target: /app/node_modules
+  react:
+    build:
+      context: ./infra/react
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./react_app
+        target: /app/src
+      - type: volume
+        source: react-store
+        target: /app/node_modules
