@@ -17,34 +17,14 @@ migrate = Migrate(app, db) #マイグレーションの設定
 
 @app.route('/')
 def hello():
-    # db.create_all()
-    # database_seeder(app)
     return 'Hello, World!'
+
+@app.route('/seed/<num>', methods=['GET'])
+def seeder(num):
+    n = int(num)
+    database_seeder(app,n)
+    return num + '件のダミーデータを挿入しました。'
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-
-
-#テスト用のデータを一括挿入する。
-def db_seeder():
-    from faker import Faker
-    import random
-    
-    faker = Faker('ja_JP')
-    users = []
-    
-    for _ in range(100):
-        user = User(
-            device_id = faker.random_number(digits=12),
-            name = faker.name(),
-            email = faker.email(),
-            password = faker.password(),
-            is_bot = random.choice([True, False])
-        )
-        users.append(user)
-
-    # 一度にすべてのユーザーを保存
-    db.session.bulk_save_objects(users)
-    db.session.commit()
