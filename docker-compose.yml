@@ -4,6 +4,7 @@ volumes:
   db-store:
   flask-store:
   react-store:
+  node_modules_volume:
 
 services:
   app:
@@ -54,16 +55,14 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD:-password}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
 
-  # react:
-  #   build:
-  #     context: .
-  #     dockerfile: ./infra/react/Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - type: bind
-  #       source: ./src
-  #       target: /app/src
-  #     - type: volume
-  #       source: react-store
-  #       target: /app/node_modules
+  frontend:
+    build: ./infra/react
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./react_app:/usr/src/app
+    command: sh -c 'npm start'
+    ports:
+      - 8000:3000
+    tty: true
+

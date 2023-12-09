@@ -1,18 +1,21 @@
 # モデルのインポート
-from datetime import time
+from datetime import time , datetime, timedelta
 from .models import *
 from faker import Faker
 import random
 
-def database_seeder(app):
+def database_seeder(app,num):
     with app.app_context():
         
         faker = Faker('ja_JP')
-        users = []
-        clusters = []
-        settings = []
+
+        # 現在の日時を取得
+        now = datetime.now()
+
+        # 10日前の日時を計算
+        ten_days_ago = now - timedelta(days=10)
         
-        for _ in range(100):
+        for _ in range(num):
             
             # 一人のユーザーを作成
             user = User(
@@ -21,62 +24,27 @@ def database_seeder(app):
                 email = faker.unique.email(),
                 password = "password"
             )
-            users.append(user)
+            db.session.add(user)
+            db.session.commit()  # ユーザーごとにコミット
             
-            # 一人のユーザーに対して設定を作成
-            
-        db.session.add_all(users)
+            # 一人のユーザーに対して過去10日分の設定を作成
+            for i in range(10):
+                # ランダムな時間を生成（5:00から12:00まで）
+                random_hour = random.randint(5, 11)
+                random_minute = random.randint(0, 59)
+                random_time = time(random_hour, random_minute)
+
+                # 設定された日時を計算
+                setting_at = ten_days_ago + timedelta(days=i)
+
+                setting = Settings(
+                    user_id = user.id,
+                    tomorrow_wake_up_time = random_time,
+                    yesterday_sleep_level = random.randint(1, 5),
+                    setting_at = setting_at
+                )
+                db.session.add(setting)
+                
         db.session.commit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # settingsモデルにテストデータを挿入
-#         setting = Settings(user_id=user.id, tomorrow_wake_up_time=time(7, 0), yesterday_sleep_level=5)
-#         db.session.add(setting)
-#         db.session.commit()
         
-        
-#         # clustersモデルにテストデータを挿入
-#         cluster = Clusters(middle_wake_up_time=time(6, 30))
-#         db.session.add(cluster)
-#         db.session.commit()
-
-#         # cluster_userモデルにテストデータを挿入
-#         cluster_user_record = ClusterUser(user_id=user.id, cluster_id=cluster.id)
-#         db.session.add(cluster_user_record)
-#         db.session.commit()
-        
-#         pass
 
