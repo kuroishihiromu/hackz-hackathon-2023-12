@@ -18,7 +18,7 @@ migrate = Migrate(app, db) #マイグレーションの設定
 @app.route('/')
 def hello():
     # db.create_all()
-    database_seeder(app)
+    # database_seeder(app)
     return 'Hello, World!'
 
 if __name__ == '__main__':
