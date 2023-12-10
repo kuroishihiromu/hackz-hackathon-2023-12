@@ -22,7 +22,7 @@ class User(db.Model):
     # ユーザーに関連する設定（一対多のリレーションシップ）
     settings = db.relationship('Settings', backref='user', lazy=True)
     # ユーザーが属するクラスタ（多対多のリレーションシップ）
-    clusters = db.relationship('Clusters', secondary='cluster_user', backref=db.backref('users', lazy='dynamic'))
+    clusters = db.relationship('Cluster', secondary='cluster_user', backref=db.backref('users', lazy='dynamic'))
 
 class ClusterUser(db.Model):
     __tablename__ = 'cluster_user'
@@ -31,7 +31,7 @@ class ClusterUser(db.Model):
     cluster_id = db.Column(db.Integer, db.ForeignKey('clusters.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-class Clusters(db.Model):
+class Cluster(db.Model):
     __tablename__ = 'clusters'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     middle_wake_up_time = db.Column(db.Time, nullable=False)
