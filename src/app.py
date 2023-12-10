@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-
+from flask_cors import CORS
 #自作のdatabaseモジュールをインポート
 from database.models import *
 from database.seeder import *
@@ -10,6 +10,7 @@ from database import init_db
 
 app = Flask(__name__)
 
+CORS(app)
 init_db(app) #環境変数の設定
 db.init_app(app) #DBの初期化
 migrate = Migrate(app, db) #マイグレーションの設定
@@ -17,7 +18,7 @@ migrate = Migrate(app, db) #マイグレーションの設定
 
 @app.route('/')
 def hello():
-    return 'Hello, World!'
+    return "Hello! Yasetomo!"
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):

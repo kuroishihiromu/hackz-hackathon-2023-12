@@ -3,5 +3,6 @@ sqlalchemy
 mysql-connector-python
 Flask-SQLAlchemy
 Flask-Migrate
+Flask-Cors
 mysqlclient  # MySQL用のPythonドライバ
 Faker
