@@ -55,14 +55,15 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD:-password}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
 
-  frontend:
-    build: ./infra/react
-    environment:
-      - NODE_ENV=development
+
+  react-app:
+    build:
+      context: ./infra/react
+      dockerfile: Dockerfile
+    container_name: react-app
+    command: sh -c "cd react-sample && npm start"
     volumes:
-      - ./react_app:/usr/src/app
-    command: sh -c 'npm start'
+      - ./react_app/:/code
     ports:
-      - 8000:3000
-    tty: true
+      - '8000:3000'
 
