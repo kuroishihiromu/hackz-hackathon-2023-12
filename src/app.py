@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+
+from flask import Flask, request, jsonify, render_template
 from flask_migrate import Migrate
 from cluster_manager import ClusterManager
 from flask_cors import CORS
@@ -24,8 +25,8 @@ migrate = Migrate(app, db) #マイグレーションの設定
 
 
 @app.route('/')
-def hello():
-    return "Hello! Yasetomo!"
+def index():
+    return render_template('index.html')
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):
