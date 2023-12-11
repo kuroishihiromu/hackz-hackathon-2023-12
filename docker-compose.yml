@@ -61,7 +61,7 @@ services:
       context: ./infra/react
       dockerfile: Dockerfile
     container_name: react-app
-    command: sh -c "cd react-sample && npm start"
+    command: sh -c "cd frontend && npm start"
     volumes:
       - ./react_app/:/code
     ports:
