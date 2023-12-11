@@ -1,5 +1,6 @@
 from flask import Flask
 from datetime import time , datetime, timedelta
+from tree_manager import TreeManager
 
 #自作のdatabaseモジュールをインポート
 from database.models import *
@@ -8,6 +9,7 @@ class ClusterManager:
     def __init__(self, app):
         self.app = app
         self.clusters = []
+        self.trees = []
 
     def init_cluster(self):
 
@@ -46,17 +48,19 @@ class ClusterManager:
         for i in range(0,len(sorted_users),15):
             users = sorted_users[i:i+15]
             if len(users) < 15:
-                set_time = users[0].settings[0].tomorrow_wake_up_time
+                set_time = sorted(users[0].settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time
             else:
-                set_time = users[7].settings[0].tomorrow_wake_up_time
+                set_time = sorted(users[7].settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time
             cluster = Cluster(middle_wake_up_time = set_time)
             db.session.add(cluster)
-            db.session.commit()
             for user in users:
                 cluster.users.append(user)
-                db.session.commit()
             self.clusters.append(cluster)
-
+            
+            tree_manager = TreeManager(cluster)
+            self.trees.append(tree_manager.create_tree())
+        
+        db.session.commit()
 
     # 一番目のクラスタのユーザー名と起床時刻をテキスト形式で返す
     def get_cluster_info(self):

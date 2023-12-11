@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from cluster_manager import ClusterManager
 from flask_cors import CORS
-from tree_manager import TreeManager
+import json
 
 #自作のdatabaseモジュールをインポート
 from database.models import *
@@ -34,15 +34,18 @@ def seeder(num):
     database_seeder(app,n)
     return num + '件のダミーデータを挿入しました。'
 
-@app.route('/cluster')
+# 定期実行デーモンからの依頼を受けて、クラスターを作成し、各クラスターのルートユーザーのidとその起床時刻をjson形式で返す。
+@app.route('/create_cluster')
 def create_cluster():
     cluster_manager = ClusterManager(app)
     cluster_manager.init_cluster()
     
-    tree_manager = TreeManager(cluster_manager.get_device_user_cluster())
-    ans = tree_manager.create_tree()
-    cluster_manager.get_cluster_info()
-    return ans
+    # # # 辞書型を作成
+    # cluster_dict = {}
+    # for cluster, tree in zip(cluster_manager.clusters, cluster_manager.trees):
+    #     cluster_dict[tree.root_user.id] = cluster.middle_wake_up_time
+    
+    return str(cluster_manager.trees[0].root_user.name)
 
 
 # @app.route('/cluster1')

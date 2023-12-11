@@ -8,14 +8,17 @@ class TreeManager:
     self.cluster = Cluster
     self.tree = nx.DiGraph()
     self.root_user = None
+    self.set_time = None
 
   def create_tree(self):
     
-    # clusterに所属するユユーザーを取得
+    # clusterに所属するユーザーを取得
     users = self.cluster.users
     
     # userの過去１０日間のsleep_levelの平均値を用いて降順にソート
-    sorted_users = sorted(users, reverse=True, key=lambda x: sum([setting.yesterday_sleep_level for setting in x.settings])/len(x.settings))
+    sorted_users = sorted(users, reverse=True, key=lambda x: 
+      sum([setting.yesterday_sleep_level for setting in x.settings])
+      /len(x.settings))
     
     # 一番sleep_levelが高いユーザーをroot_userとする
     self.root_user = sorted_users[0]
@@ -55,4 +58,5 @@ class TreeManager:
 
         count += 1
 
-    return self.tree
+    return True
+
