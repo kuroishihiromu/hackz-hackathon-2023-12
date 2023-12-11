@@ -38,14 +38,9 @@ class ClusterManager:
 
             # user_wake_up_timeに追加
             user_wake_up_time[user.id] = setting.tomorrow_wake_up_time
-
-        #辞書型をvalueで昇順にソート
-        sorted_user_wake_up_time = sorted(user_wake_up_time.items(), key=lambda x:x[1])
-
-        # 辞書型をもとにusersをソート
-        sorted_users = []
-        for user_id, _ in sorted_user_wake_up_time:
-            sorted_users.append(User.query.get(user_id))
+            
+        sorted_users = sorted(users,key=lambda x:
+            sorted(x.settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time)
 
         # 15人ごとにusersを分割し、分割され集団ごとにclustersを作成し、関係性を定義したのち、clusterをself.clustersに追加
         for i in range(0,len(sorted_users),15):
@@ -69,5 +64,20 @@ class ClusterManager:
         users = cluster.users
         text = ''
         for user in users:
-            text += user.name + ' ' + user.settings[0].tomorrow_wake_up_time.strftime('%H:%M') + '\n'
+            text += user.name + ' ' + sorted(user.settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time.strftime('%H:%M') + '\n'
         return text
+    
+    # 実機ユーザーの所属するクラスタを返す。
+    def get_device_user_cluster(self):
+        
+        # 実機ユーザーのidを取得
+        user = User.query.filter_by(is_bot=False).first() 
+        
+        # ユーザーがいなければエラーをスロー
+        if user is None:
+            raise Exception('実機ユーザーが存在しません。')
+        
+        # cluster = user.clusters[0]
+        cluster = sorted(user.clusters, reverse=True, key=lambda x:x.create_at)[0]
+        
+        return cluster

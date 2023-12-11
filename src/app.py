@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from cluster_manager import ClusterManager
 from flask_cors import CORS
+from tree_manager import TreeManager
 
 #自作のdatabaseモジュールをインポート
 from database.models import *
@@ -35,9 +36,21 @@ def seeder(num):
 
 @app.route('/cluster')
 def create_cluster():
-    manager = ClusterManager(app)
-    manager.init_cluster()
-    return manager.get_cluster_info()
+    cluster_manager = ClusterManager(app)
+    cluster_manager.init_cluster()
+    
+    tree_manager = TreeManager(cluster_manager.get_device_user_cluster())
+    ans = tree_manager.create_tree()
+    cluster_manager.get_cluster_info()
+    return ans
+
+
+# @app.route('/cluster1')
+# def create_cluster():
+#     manager = ClusterManager(app)
+#     manager.init_cluster()
+#     return manager.get_device_user_cluster()
+
 
 @app.route('/login', methods=['POST'])
 def login():

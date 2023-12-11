@@ -6,3 +6,4 @@ Flask-Migrate
 Flask-Cors
 mysqlclient  # MySQL用のPythonドライバ
 Faker
+networkx
