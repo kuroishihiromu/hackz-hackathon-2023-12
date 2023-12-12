@@ -2,7 +2,9 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from cluster_manager import ClusterManager
 from flask_cors import CORS
+from tree_manager import TreeManager
 import json
+import pickle
 
 #自作のdatabaseモジュールをインポート
 from database.models import *
@@ -34,25 +36,31 @@ def seeder(num):
     database_seeder(app,n)
     return num + '件のダミーデータを挿入しました。'
 
-# 定期実行デーモンからの依頼を受けて、クラスターを作成し、各クラスターのルートユーザーのidとその起床時刻をjson形式で返す。
+# 定期実行デーモンからの依頼を受けて、クラスターを作成、保存したのち、各クラスターのルートユーザーのidとその起床時刻をjson形式で返す。
 @app.route('/create_cluster')
 def create_cluster():
     cluster_manager = ClusterManager(app)
     cluster_manager.init_cluster()
     
-    # # # 辞書型を作成
-    # cluster_dict = {}
-    # for cluster, tree in zip(cluster_manager.clusters, cluster_manager.trees):
-    #     cluster_dict[tree.root_user.id] = cluster.middle_wake_up_time
+    # tree_manager = TreeManager(cluster_manager.clusters[0])
+    # tree_manager.create_tree()
     
-    return str(cluster_manager.trees[0].root_user.name)
+    tree_managers = []
+    dict = {}
+    for cluster in cluster_manager.clusters:
+        tree_manager = TreeManager(cluster)
+        tree_manager.create_tree()
+        tree_managers.append(tree_manager)
+        dict[tree_manager.root_user.id] = str(cluster.middle_wake_up_time)
 
-
-# @app.route('/cluster1')
-# def create_cluster():
-#     manager = ClusterManager(app)
-#     manager.init_cluster()
-#     return manager.get_device_user_cluster()
+    # 今日の日付
+    today = datetime.now().strftime('%Y%m%d')
+    
+    # バイナリとして保存
+    with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
+        pickle.dump(tree_managers, file)   
+    
+    return jsonify(dict)
 
 
 @app.route('/login', methods=['POST'])

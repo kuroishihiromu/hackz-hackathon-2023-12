@@ -2,6 +2,9 @@
 from database.models import *
 import networkx as nx
 from collections import deque
+from datetime import datetime, timedelta
+import pickle
+
 
 class TreeManager:
   def __init__(self,Cluster):
@@ -15,10 +18,14 @@ class TreeManager:
     # clusterに所属するユーザーを取得
     users = self.cluster.users
     
-    # userの過去１０日間のsleep_levelの平均値を用いて降順にソート
+    # 現在の日付から10日前の日付を計算
+    ten_days_ago = datetime.now() - timedelta(days=10)
+    
+    # 過去10日間の設定のみを考慮して平均値を計算し、その平均値でユーザーを降順にソート
     sorted_users = sorted(users, reverse=True, key=lambda x: 
-      sum([setting.yesterday_sleep_level for setting in x.settings])
-      /len(x.settings))
+        sum(setting.yesterday_sleep_level for setting in x.settings if setting.setting_at >= ten_days_ago)
+        / len([setting for setting in x.settings if setting.setting_at >= ten_days_ago]))
+
     
     # 一番sleep_levelが高いユーザーをroot_userとする
     self.root_user = sorted_users[0]

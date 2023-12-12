@@ -9,7 +9,6 @@ class ClusterManager:
     def __init__(self, app):
         self.app = app
         self.clusters = []
-        self.trees = []
 
     def init_cluster(self):
 
@@ -44,22 +43,19 @@ class ClusterManager:
         sorted_users = sorted(users,key=lambda x:
             sorted(x.settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time)
 
-        # 15人ごとにusersを分割し、分割され集団ごとにclustersを作成し、関係性を定義したのち、clusterをself.clustersに追加
+        # 15人ごとにusersを分割し、分割され集団ごとにclustersを作成、関係性を定義したのち、clusterをself.clustersに追加
         for i in range(0,len(sorted_users),15):
-            users = sorted_users[i:i+15]
+            users_15 = sorted_users[i:i+15]
             if len(users) < 15:
-                set_time = sorted(users[0].settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time
+                set_time = sorted(users_15[0].settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time
             else:
-                set_time = sorted(users[7].settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time
+                set_time = sorted(users_15[7].settings, reverse=True, key=lambda y:y.setting_at)[0].tomorrow_wake_up_time
             cluster = Cluster(middle_wake_up_time = set_time)
             db.session.add(cluster)
-            for user in users:
+            for user in users_15:
                 cluster.users.append(user)
             self.clusters.append(cluster)
             
-            tree_manager = TreeManager(cluster)
-            self.trees.append(tree_manager.create_tree())
-        
         db.session.commit()
 
     # 一番目のクラスタのユーザー名と起床時刻をテキスト形式で返す
