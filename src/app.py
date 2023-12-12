@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from cluster_manager import ClusterManager
@@ -24,8 +25,8 @@ migrate = Migrate(app, db) #マイグレーションの設定
 
 
 @app.route('/')
-def hello():
-    return "Hello! Yasetomo!"
+def index():
+    return "hello"
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):
