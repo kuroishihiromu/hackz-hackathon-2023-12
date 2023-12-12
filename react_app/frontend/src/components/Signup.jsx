@@ -5,6 +5,7 @@ const SignUp = () => {
     const [showForm, setShowForm] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [DeviceID, setDeviceID] = useState('');
 
     const handleSignUpToggle = () => {
         // ボタンをクリックするたびに表示と非表示をトグル
@@ -13,9 +14,10 @@ const SignUp = () => {
 
     const handleSignUp = async () => {
         try {
-            const response = await axios.post('/api/signup', {
+            const response = await axios.post('http://localhost:5000/signup', {
                 username: username,
                 password: password,
+                DeviceID: DeviceID
             });
             console.log('新規登録成功:', response.data);
 
@@ -41,6 +43,16 @@ const SignUp = () => {
                             id="newUsername"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            className="border rounded-md px-2 py-1"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="newDeviceID" className="mt-2">デバイスID:</label>
+                        <input 
+                            type="text"
+                            id="newDeviceID"
+                            value={DeviceID}
+                            onChange={(e) => setDeviceID(e.target.value)}
                             className="border rounded-md px-2 py-1"
                         />
                     </div>

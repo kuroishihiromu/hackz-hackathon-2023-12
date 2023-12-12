@@ -68,17 +68,40 @@ def create_cluster():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
 
-    user = User.query.filter_by(email=email).first()
+    if'username' not in data or 'password' not in data:
+        return jsonify({'error':'無効なリクエスト'}), 400
+    
+    username = data['username']
+    password = data['password']
+
+    user = User.query.filter_by(username=username).first()
 
     if user and check_password_hash(user.password, password):
-        return jsonify({'message': 'Login successful', 'username': user.name})
+        return jsonify({'message': 'ログイン成功'})
     else:
-        return jsonify({'message': 'Login failed'})
+        return jsonify({'error': '無効な資格情報'}), 401
 
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
 
+    if 'username' not in data or'password' not in data or 'DeviceID' not in data:
+        return jsonify({'error': '無効なリクエスト'}), 400
+
+    username = data['username']
+    password = data['password']
+    device_id = data['DeviceID']
+
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({'error':'既に登録済みです。'}), 400
+    
+    new_user = User(username=username, password=password, device_id = device_id)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': '登録されました。'})
 
 if __name__ == '__main__':
     app.run(debug=True)
