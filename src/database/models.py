@@ -17,7 +17,9 @@ class User(db.Model):
     email = db.Column(db.VARCHAR(48),nullable=False,unique= True)
     password = db.Column(db.VARCHAR(12),nullable=False)
     is_bot = db.Column(db.Boolean, default=True,nullable=False)
+    status = db.Column(db.Boolean, default=True,nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
     
     # ユーザーに関連する設定（一対多のリレーションシップ）
     settings = db.relationship('Settings', backref='user', lazy=True)
@@ -38,5 +40,6 @@ class Cluster(db.Model):
     create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
     
     # Userモデルで逆方向の関係性が既に定義済みなので、こちらは定義しない
+
 
 
