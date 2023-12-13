@@ -19,7 +19,8 @@ const Login = () => {
                 password: password,
             });
             console.log('ログイン成功:', response.data);
-
+            sessionStorage.setItem('userid', response.data.userid)
+            
             // ログイン成功時の追加の処理をここに追加
 
             window.location.href = '/home';
