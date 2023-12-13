@@ -1,10 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 const Home = () => {
     
     return (
-        <div className="">
+        <div className="text-center">
             <h1>Home</h1>
         </div>
     )
