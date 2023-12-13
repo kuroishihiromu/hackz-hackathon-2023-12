@@ -1,20 +1,36 @@
 import './App.css'
-import Login from './components/Login';
+import Top from './components/Top'
+import Login from './components/Login'
 import SignUp from './components/Signup'
+import Home from './components/Home'
+
+import {BrowserRouter,Route, Routes} from 'react-router-dom'
+
+
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <div className="text-4xl text-center">
+//         <Top />
+//         <Login />
+//         <SignUp />  
+//         <Routes>
+//           <Route path='/home' element={<Home />} />
+//         </Routes>
+//       </div>
+//     </BrowserRouter>
+//   );
+// }
 
 function App() {
   return (
-    <div className="text-4xl text-center">
-      <header className="my-20">
-        App Title
-      </header>
-      <div>
-        <img src='/img/tree-icon.png' alt='tree-icon' className='w-[60%] mx-auto my-20'></img>
-      </div>
-      <Login />
-      <SignUp />
-    </div>
-  );
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Top />} />
+        <Route path='/home' element={<Home />}/>
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App;

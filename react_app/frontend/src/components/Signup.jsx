@@ -6,6 +6,7 @@ const SignUp = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [DeviceID, setDeviceID] = useState('');
+    const [Email, setEmail] = useState('');
 
     const handleSignUpToggle = () => {
         // ボタンをクリックするたびに表示と非表示をトグル
@@ -17,13 +18,14 @@ const SignUp = () => {
             const response = await axios.post('http://localhost:5000/signup', {
                 username: username,
                 password: password,
-                DeviceID: DeviceID
+                DeviceID: DeviceID,
+                Email: Email
             });
             console.log('新規登録成功:', response.data);
 
             // 新規登録成功時の追加の処理をここに追加
 
-            // 例：登録成功後にログインフォームを表示させる
+            window.location.href = '/home';
             setShowForm(true);
 
         } catch (error) {
@@ -53,6 +55,16 @@ const SignUp = () => {
                             id="newDeviceID"
                             value={DeviceID}
                             onChange={(e) => setDeviceID(e.target.value)}
+                            className="border rounded-md px-2 py-1"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="newEmail" className="mt-2">メールアドレス</label>
+                        <input 
+                            type="text"
+                            id="newEmail"
+                            value={Email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="border rounded-md px-2 py-1"
                         />
                     </div>

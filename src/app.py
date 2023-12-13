@@ -18,7 +18,7 @@ from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, origin="http://localhost:8000")
 app.config['SECRET_KEY'] ='your_secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
@@ -67,37 +67,39 @@ def create_cluster():
 
 @app.route('/login', methods=['POST'])
 def login():
+    
     data = request.get_json()
 
     if'username' not in data or 'password' not in data:
         return jsonify({'error':'無効なリクエスト'}), 400
     
-    username = data['username']
+    email = data['username']
     password = data['password']
 
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter(User.email == email).first()
 
-    if user and check_password_hash(user.password, password):
+    if user and user.password == password:
         return jsonify({'message': 'ログイン成功'})
     else:
         return jsonify({'error': '無効な資格情報'}), 401
-
+    
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
 
-    if 'username' not in data or'password' not in data or 'DeviceID' not in data:
+    if 'username' not in data or'password' not in data or 'DeviceID' not in data or 'Email' not in data:
         return jsonify({'error': '無効なリクエスト'}), 400
 
-    username = data['username']
-    password = data['password']
-    device_id = data['DeviceID']
-
-    existing_user = User.query.filter_by(username=username).first()
+    existing_user = User.query.filter(User.email == data["Email"]).first()
     if existing_user:
         return jsonify({'error':'既に登録済みです。'}), 400
-    
-    new_user = User(username=username, password=password, device_id = device_id)
+
+    new_user = User(
+        name=data['username'], 
+        password=data['password'], 
+        email=data['Email'],
+        device_id = data['DeviceID']  
+    )
     db.session.add(new_user)
     db.session.commit()
 
