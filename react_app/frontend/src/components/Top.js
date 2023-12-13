@@ -1,11 +1,18 @@
-import React from "react";
+//Top.js
+import React from "react"
+import Login from './Login'
+import SignUp from './Signup'
 const Top = () => {
-    <>
-        <div>App Title</div>
-        <div>
-            <img src='/img/tree-icon.png' alt='tree-icon' className='w-[60%] mx-auto my-20'></img>
-        </div>
-    </>
+    return(
+        <>
+            <div className="text-center">
+                <div>App Title</div>
+                <img src='/img/tree-icon.png' alt='tree-icon' className='w-[60%] mx-auto my-20'></img>
+                <Login />
+                <SignUp />
+            </div>
+        </>
+    )
 }
 
 export default Top

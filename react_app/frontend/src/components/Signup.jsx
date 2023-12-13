@@ -1,3 +1,4 @@
+//Signup.js
 import React, { useState } from "react";
 import axios from 'axios';
 
@@ -22,8 +23,7 @@ const SignUp = () => {
                 Email: Email
             });
             console.log('新規登録成功:', response.data);
-
-            // 新規登録成功時の追加の処理をここに追加
+            sessionStorage.setItem('userid', response.data.userid)
 
             window.location.href = '/home';
             setShowForm(true);

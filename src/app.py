@@ -79,7 +79,7 @@ def login():
     user = User.query.filter(User.email == email).first()
 
     if user and user.password == password:
-        return jsonify({'message': 'ログイン成功'})
+        return jsonify({'userid': user.id})
     else:
         return jsonify({'error': '無効な資格情報'}), 401
     
@@ -103,7 +103,20 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({'message': '登録されました。'})
+    return jsonify({'userid': new_user.id})
+
+@app.route('/set_time', methods=['POST'])
+def set_time():
+    data = request.get_json()
+    settingTime = Settings(
+        user_id = data['user_id'],
+        tomorrow_wake_up_time = data['WakeUpTime'],
+        yesterday_sleep_level = data['SleepLevel']
+    )
+    db.session.add(settingTime)
+    db.session.commit()
+
+    return jsonify({'success':True})
 
 if __name__ == '__main__':
     app.run(debug=True)

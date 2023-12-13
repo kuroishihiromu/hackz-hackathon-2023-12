@@ -1,12 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import SetTime from "./SetTime"
 const Home = () => {
     
     return (
-        <div className="">
-            <h1>Home</h1>
-        </div>
+        <>
+            <div className="text-center">
+                <h1>Home</h1>
+                <div>
+                    render the tree...
+                </div>
+            </div>
+            <SetTime />
+        </>
+
     )
 }
 
