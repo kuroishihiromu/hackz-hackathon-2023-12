@@ -1,22 +1,6 @@
 // WakeUpTree.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import WakeUpNode from './WakeUpNode';
-
-
-const WakeUpTree = () => {
-
-    const [nodesData, setNodesData] = useState([])
-
-    useEffect(() => {
-        axios.get("http://localhost:5000/get_tree")
-        .then(response => {
-            setNodesData(response.data)
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error)
-        })
-    }, [])
 
   return (
     <>

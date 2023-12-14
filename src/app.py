@@ -8,7 +8,7 @@ from tree_manager import TreeManager
 from aws_manager import AwsManager
 import json
 import pickle
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 
 #自作のdatabaseモジュールをインポート
 from database.models import *
@@ -28,7 +28,7 @@ app.config['SESSION_PERMANENT'] = False
 init_db(app) #環境変数の設定
 db.init_app(app) #DBの初期化
 migrate = Migrate(app, db) #マイグレーションの設定
-
+sockertio = SocketIO(app)
 
 @app.route('/')
 def index():
@@ -147,7 +147,11 @@ def set_time():
 
     return jsonify({'success':True})
 
-
+@socketio.on('connect')
+def connect(data):
+    print(data)
+    status = data['status']
+    socketio.emit('status_changed', {'status': status})
 
 if __name__ == '__main__':
     app.run(debug=True)

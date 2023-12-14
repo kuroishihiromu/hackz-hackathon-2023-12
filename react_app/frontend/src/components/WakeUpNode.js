@@ -3,16 +3,27 @@ import React, { useEffect, useState } from "react";
 import socketIOClient from 'socket.io-client'
 
 const WakeUpNode = ({label, top, left}) => {
-    const [status, setStatus] = useState(false)
+  const [status, setStatus] = useState(false)
+  const [nodesData, setNodesData] = useState([])
 
     useEffect(() => {
-        const socket = socketIOClient("http://localhost/get_status")
+      const socket = socketIOClient("http://localhost:5000")
 
-        socket.on("statusChanged", (newStatus) =>
-        {
-            setStatus(newStatus)
-        })
-    })
+      socket.on("status_changed", (data) =>{
+          setStatus(data.status)
+          const updatedNodesData = JSON.parse(data.nodesData)
+
+          if(data.status){
+            setNodesData(updatedNodesData)
+          } else {
+            setNodesData([])
+          }
+      })
+
+      return () => {
+        socket.disconnect()
+      }
+    }, [])
 
     const nodeStyle = {
 
@@ -24,10 +35,6 @@ const WakeUpNode = ({label, top, left}) => {
         height: "20px",
         backgroundColor: "#FF0000",
     }
-
-    return (
-        socket.disconnect()
-    )
 
     return (
       <>
