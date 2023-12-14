@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from cluster_manager import ClusterManager
 from flask_cors import CORS
 from tree_manager import TreeManager
+from aws_manager import AwsManager
 import json
 import pickle
 
@@ -32,6 +33,26 @@ migrate = Migrate(app, db) #マイグレーションの設定
 def index():
     return "hello"
 
+@app.route('/aws')
+def aws():
+    aws_manager = AwsManager()
+    aws_manager.create_rule()
+    return "finished!"
+
+@app.route('/wake_up/<index>', methods=['GET'])
+def test(index):
+    
+    # 今日の日付
+    today = datetime.now().strftime('%Y%m%d')
+    
+    # piklからtree_managersを読み込み
+    with open("./tree_logs/{}_trees.pkl".format(today), 'rb') as f:
+        loaded_object = pickle.load(f)
+    
+    loaded_object[int(index)].wake_up_user(loaded_object[int(index)].root_user)
+    
+    return "ok"
+
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):
     n = int(num)
@@ -48,21 +69,28 @@ def create_cluster():
     # tree_manager.create_tree()
     
     tree_managers = []
+    tree_index = 0
     dict = {}
     for cluster in cluster_manager.clusters:
         tree_manager = TreeManager(cluster)
         tree_manager.create_tree()
         tree_managers.append(tree_manager)
-        dict[tree_manager.root_user.id] = str(cluster.middle_wake_up_time)
-
+        dict[tree_index] = str(cluster.middle_wake_up_time)
+        tree_index += 1
+    # tree_managersをcluster.idでソート
+    
+    
     # 今日の日付
     today = datetime.now().strftime('%Y%m%d')
     
     # バイナリとして保存
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
-        pickle.dump(tree_managers, file)   
+        pickle.dump(tree_managers, file)  
+        
+    # json形式をもとにawsにデータを送信
     
     return jsonify(dict)
+
 
 
 @app.route('/login', methods=['POST'])
