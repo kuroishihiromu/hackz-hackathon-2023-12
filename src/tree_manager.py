@@ -4,6 +4,8 @@ import networkx as nx
 from collections import deque
 from datetime import datetime, timedelta
 import pickle
+import random
+import threading
 
 
 class TreeManager:
@@ -11,7 +13,7 @@ class TreeManager:
         self.cluster = Cluster
         self.tree = nx.DiGraph()
         self.root_user = None
-        self.set_time = None
+        self.process_id = random.randint(10000000, 99999999)
     
     def create_tree(self):
         
@@ -66,7 +68,7 @@ class TreeManager:
 
         return True
 
-    def wake_up_user(self,user):
+    def wake_up_child(self,user):
         
         ####################################
         # ここでuserのアラームを鳴らす処理 #
@@ -86,10 +88,29 @@ class TreeManager:
         # treeで自身を親に持つusersを取得
         children = list(self.tree.successors(user))
         
-        # 起きたuserの子供がいなければ終了
+        # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
         if len(children) == 0:
+            return True
+        
+        # 全員が起きたら終了（木全体の終了条件）
+        if self.check_all_user_awake():
+            # プロセスを終了（DBの処理を記述）
             return True
 
         #再帰
         for child in children:
-            self.wake_up_user(child)
+            self.wake_up_child(child)
+
+    def check_all_user_awake(self):
+        # treeの全てのノードを取得
+        nodes = list(self.tree.nodes)
+
+        for node in nodes:
+            user = User.query.filter(User.id == node.id).first()
+            if not user or not user.status:
+                # ユーザーが存在しない、またはユーザーのステータスが非活動の場合
+                return False
+
+        # すべてのユーザーが起きている（活動している）場合
+        return True
+
