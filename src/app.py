@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from cluster_manager import ClusterManager
 from flask_cors import CORS
 from tree_manager import TreeManager
+from aws_manager import AwsManager
 import json
 import pickle
 
@@ -31,6 +32,12 @@ migrate = Migrate(app, db) #マイグレーションの設定
 @app.route('/')
 def index():
     return "hello"
+
+@app.route('/aws')
+def aws():
+    aws_manager = AwsManager()
+    aws_manager.create_rule()
+    return "finished!"
 
 @app.route('/wake_up/<index>', methods=['GET'])
 def test(index):
@@ -78,7 +85,9 @@ def create_cluster():
     
     # バイナリとして保存
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
-        pickle.dump(tree_managers, file)   
+        pickle.dump(tree_managers, file)  
+        
+    # json形式をもとにawsにデータを送信
     
     return jsonify(dict)
 
