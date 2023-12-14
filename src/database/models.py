@@ -7,7 +7,7 @@ class Settings(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     tomorrow_wake_up_time = db.Column(db.Time, nullable=False)
     yesterday_sleep_level = db.Column(db.Integer,nullable=False)
-    setting_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    setting_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -18,7 +18,7 @@ class User(db.Model):
     password = db.Column(db.VARCHAR(12),nullable=False)
     is_bot = db.Column(db.Boolean, default=True,nullable=False)
     status = db.Column(db.Boolean, default=True,nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     
     # ユーザーに関連する設定（一対多のリレーションシップ）
@@ -31,15 +31,21 @@ class ClusterUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     cluster_id = db.Column(db.Integer, db.ForeignKey('clusters.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
 class Cluster(db.Model):
     __tablename__ = 'clusters'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     middle_wake_up_time = db.Column(db.Time, nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
     
     # Userモデルで逆方向の関係性が既に定義済みなので、こちらは定義しない
 
-
+class Process(db.Model):
+    __tablename__ = 'processes'
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.VARCHAR(12), default="running",nullable=False)
+    termination_flag = db.Column(db.Boolean, default=False,nullable=False)
+    start_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    end_at = db.Column(db.DateTime, nullable=True)
 
