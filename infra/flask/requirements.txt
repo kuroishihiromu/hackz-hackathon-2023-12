@@ -7,4 +7,5 @@ Flask-Cors
 mysqlclient  # MySQL用のPythonドライバ
 Faker
 networkx
+boto3
 flask-socketio

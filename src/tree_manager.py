@@ -37,7 +37,6 @@ class TreeManager:
         for user in sorted_users:
             queue.append(user)
         
-        
         ################
         ### 木の構築 ###
         ################
@@ -67,3 +66,30 @@ class TreeManager:
 
         return True
 
+    def wake_up_user(self,user):
+        
+        ####################################
+        # ここでuserのアラームを鳴らす処理 #
+        #################################### 
+        
+        # userが起きたら次の処理へ
+        while True:
+            # userのstatusを更新
+            updated_user = User.query.filter(User.id == user.id).first()
+            
+            if updated_user.status == True:
+                break
+            
+            # 5秒待機
+            time.sleep(5)
+        
+        # treeで自身を親に持つusersを取得
+        children = list(self.tree.successors(user))
+        
+        # 起きたuserの子供がいなければ終了
+        if len(children) == 0:
+            return True
+
+        #再帰
+        for child in children:
+            self.wake_up_user(child)
