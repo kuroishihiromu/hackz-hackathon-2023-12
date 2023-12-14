@@ -9,7 +9,7 @@ class AwsManager:
         self.AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
         self.AWS_DEFAULT_REGION = os.environ.get('AWS_DEFAULT_REGION')
         
-    def create_wake_up_rule(self,json):
+    def create_wake_up_rule(self,wake_up_rules):
         
         #接続情報を参照 
         client = boto3.client(
@@ -19,27 +19,26 @@ class AwsManager:
             region_name=self.AWS_DEFAULT_REGION
         )
         
-        #jsonをリストに変換 
-        rules = json.loads(json)
         
         # 日付を取得
         today = datetime.now().strftime('%Y%m%d')
         
-        for rule in rules:
+        for key,value in wake_up_rules.items():
+            
             response = client.put_rule(
-                Name=rule[str(today) + "_{}_tree".format(rule[0])],
-                ScheduleExpression=rule['schedule_expression'],
+                Name=str(today) + "_{}_tree_rule".format(key),
+                ScheduleExpression = self.convert_time_to_cron(value),
                 State='ENABLED',
-                Description=rule['description']
+                Description='description'
             )
             
             response = client.put_targets(
-                Rule=rule['name'],
+                Rule=str(today) + "_{}_tree_rule".format(key),
                 Targets=[
                     {
                         'Id': '1',
-                        'Arn': rule['arn'],
-                        'Input': rule['input']
+                        'Arn': "rule['arn']",
+                        'Input': {"tree_index":key}
                     }
                 ]
             )
@@ -68,3 +67,19 @@ class AwsManager:
     #     #         }
     #     #     ]
     #     # )
+    def convert_time_to_cron(self,time_str):
+        
+        # Split the time string into hours, minutes, and seconds
+        parts = time_str.split(':')
+
+        # Check if the time string is valid
+        if len(parts) != 3:
+            raise ValueError("Time must be in HH:MM:SS format")
+
+        # Extract hours and minutes
+        hours, minutes, _ = parts
+
+        # Create the cron expression (seconds are ignored in standard cron format)
+        cron_expr = f"cron({minutes} {hours} * * ? *)"
+
+        return cron_expr

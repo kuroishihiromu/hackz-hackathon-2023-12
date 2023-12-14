@@ -36,7 +36,7 @@ def index():
 @app.route('/aws')
 def aws():
     aws_manager = AwsManager()
-    aws_manager.create_rule()
+    aws_manager.create_wake_up_rule()
     return "finished!"
 
 @app.route('/wake_up/<index>', methods=['GET'])
@@ -49,7 +49,7 @@ def test(index):
     with open("./tree_logs/{}_trees.pkl".format(today), 'rb') as f:
         loaded_object = pickle.load(f)
     
-    loaded_object[int(index)].wake_up_user(loaded_object[int(index)].root_user)
+    loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
     
     return "ok"
 
@@ -65,20 +65,15 @@ def create_cluster():
     cluster_manager = ClusterManager(app)
     cluster_manager.init_cluster()
     
-    # tree_manager = TreeManager(cluster_manager.clusters[0])
-    # tree_manager.create_tree()
-    
     tree_managers = []
     tree_index = 0
-    dict = {}
+    wake_up_rules = {}
     for cluster in cluster_manager.clusters:
         tree_manager = TreeManager(cluster)
         tree_manager.create_tree()
         tree_managers.append(tree_manager)
-        dict[tree_index] = str(cluster.middle_wake_up_time)
+        wake_up_rules[tree_index] = str(cluster.middle_wake_up_time)
         tree_index += 1
-    # tree_managersをcluster.idでソート
-    
     
     # 今日の日付
     today = datetime.now().strftime('%Y%m%d')
@@ -87,9 +82,12 @@ def create_cluster():
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
         pickle.dump(tree_managers, file)  
         
-    # json形式をもとにawsにデータを送信
+    # awsにデータを送信し、新規ルールを定義
+    aws_manager = AwsManager()
+    aws_manager.create_wake_up_rule(wake_up_rules)
     
-    return jsonify(dict)
+    
+    return "200"
 
 
 
