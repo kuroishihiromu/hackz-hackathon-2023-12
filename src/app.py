@@ -7,6 +7,7 @@ from flask_cors import CORS
 from tree_manager import TreeManager
 import json
 import pickle
+from flask_socketio import SocketIO
 
 #自作のdatabaseモジュールをインポート
 from database.models import *
@@ -117,6 +118,8 @@ def set_time():
     db.session.commit()
 
     return jsonify({'success':True})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
