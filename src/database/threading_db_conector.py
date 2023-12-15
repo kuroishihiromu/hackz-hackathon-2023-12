@@ -34,7 +34,7 @@ class DBConnector:
         # 指定されたIDのプロセスをrunningに更新
         session.execute(
             update(self.Process)
-            .filter(self.Process.id == process_id)
+            .filter(self.Process.process_id == process_id)
             .values(status='running', start_at=datetime.now())
         )
         session.commit()
@@ -46,7 +46,7 @@ class DBConnector:
         # 指定されたIDのプロセスをterminatedに更新
         session.execute(
             update(self.Process)
-            .filter(self.Process.id == process_id)
+            .filter(self.Process.process_id == process_id)
             .values(status='terminated', end_at=datetime.now())
         )
         session.commit()
@@ -58,7 +58,7 @@ class DBConnector:
         # 指定されたIDのプロセスをterminatedに更新
         session.execute(
             update(self.Process)
-            .filter(self.Process.id == process_id)
+            .filter(self.Process.process_id == process_id)
             .values(status='completed', end_at=datetime.now())
         )
         session.commit()
@@ -68,7 +68,7 @@ class DBConnector:
         Session = sessionmaker(self.engine)
         session = Session()
         # 指定されたIDのプロセスの終了フラグを確認
-        result = session.execute(select(self.Process).filter(self.Process.id == process_id))
+        result = session.execute(select(self.Process).filter(self.Process.process_id == process_id))
         process = result.scalar_one_or_none()
         session.close()
         return process.termination_flag
