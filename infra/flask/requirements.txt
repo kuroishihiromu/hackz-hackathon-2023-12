@@ -9,3 +9,6 @@ Faker
 networkx
 boto3
 flask-socketio
+PyMySQL
+asyncmy
+cryptography
