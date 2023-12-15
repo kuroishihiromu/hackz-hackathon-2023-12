@@ -71,7 +71,7 @@ class TreeManager:
             count += 1
         
         # プロセスの登録
-        db.session.add(Process(id=self.process_id, tree_index=self.tree_index, status='waiting'))
+        db.session.add(Process(process_id=self.process_id, tree_index=self.tree_index, status='waiting'))
         db.session.commit()
 
         return True
@@ -85,49 +85,57 @@ class TreeManager:
         return self.process_id
     
     def wake_up_child(self,user_id):
-        
-        ####################################
-        # ここでuserのアラームを鳴らす処理 #
-        #################################### 
-        connector = DBConnector('mysql://user:password@db:3306/mydatabase')
-        connector.setup()
-        
-
-        
-        # userが起きたら次の処理へ
-        while True:
+        try:
+            ####################################
+            # ここでuserのアラームを鳴らす処理 #
+            #################################### 
+            connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+            connector.setup()
             
-            # 終了フラグを確認
-            if connector.check_process_termination_flag(self.process_id):
-                connector.end_process(self.process_id)
+            # # 深さnのノードを取得
+            # nodes = [node for node in self.tree.nodes if nx.shortest_path_length(self.tree, self.root_user_id, node) == depth]
+            
+            # userが起きたら次の処理へ
+            while True:
+                
+                # 終了フラグを確認
+                if connector.check_process_termination_flag(self.process_id):
+                    connector.end_process(self.process_id)
+                    return True
+                
+                # userのstatusを更新
+                updated_user = connector.get_user(user_id)
+                if updated_user.status == True:
+                    break
+                
+                # 5秒待機
+                time.sleep(5)
+            
+            # treeで自身を親に持つuserのidのリストを取得
+            child_id_list = list(self.tree.successors(updated_user.id))
+            
+            
+            # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
+            if len(child_id_list) == 0:
                 return True
             
-            # userのstatusを更新
-            updated_user = connector.get_user(user_id)
-            if updated_user.status == True:
-                break
+            # 全員が起きたら終了（木全体の終了条件）
+            if self.check_all_user_awake(connector):
+                connector.complete_process(self.process_id)
+                return True
             
-            # 5秒待機
-            time.sleep(5)
-        
-        # treeで自身を親に持つuserのidのリストを取得
-        child_id_list = list(self.tree.successors(updated_user.id))
-        
-        
-        # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
-        if len(child_id_list) == 0:
-            return True
-        
-        # 全員が起きたら終了（木全体の終了条件）
-        if self.check_all_user_awake(connector):
-            connector.complete_process(self.process_id)
-            return True
-        
 
-        
-        #再帰
-        for child_id in child_id_list:
-            self.wake_up_child(child_id)
+            
+            #再帰
+            for child_id in child_id_list:
+                self.wake_up_child(child_id)
+                
+        # 例外処理（プロセスの強制終了）
+        except Exception as e:
+            connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+            connector.setup()
+            connector.end_process(self.process_id)
+            return False    
 
     def check_all_user_awake(self,connector):
         # treeの全てのノードを取得

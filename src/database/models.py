@@ -43,7 +43,8 @@ class Cluster(db.Model):
 
 class Process(db.Model):
     __tablename__ = 'processes'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    process_id = db.Column(db.Integer)
     tree_index = db.Column(db.Integer, nullable=True)
     status = db.Column(db.VARCHAR(12), default="waiting",nullable=False)
     termination_flag = db.Column(db.Boolean, default=False,nullable=False)
