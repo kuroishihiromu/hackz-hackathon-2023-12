@@ -92,8 +92,7 @@ class TreeManager:
             connector = DBConnector('mysql://user:password@db:3306/mydatabase')
             connector.setup()
             
-            # # 深さnのノードを取得
-            # nodes = [node for node in self.tree.nodes if nx.shortest_path_length(self.tree, self.root_user_id, node) == depth]
+            
             
             # userが起きたら次の処理へ
             while True:
@@ -111,9 +110,22 @@ class TreeManager:
                 # 5秒待機
                 time.sleep(5)
             
+            #ルートユーザーの場合、木の深さを1に設定 
+            if user_id == self.root_user_id:
+                connector.update_depth(self.process_id, 1)
+            else:
+                # user_idのノードの深さを計算
+                user_depth = nx.shortest_path_length(self.tree, self.root_user_id, user_id)
+                # 自分と同じ深さにあるノードのリストを取得
+                nodes_at_same_depth = [node for node in self.tree.nodes if nx.shortest_path_length(self.tree, self.root_user_id, node) == user_depth]
+                
+                if connector.check_users_status(nodes_at_same_depth):
+                    # 全員が起きている場合、自分の深さを1つ増やす
+                    depth_level = connector.get_process_depth(self.process_id)
+                    connector.update_depth(self.process_id, depth_level + 1)
+            
             # treeで自身を親に持つuserのidのリストを取得
             child_id_list = list(self.tree.successors(updated_user.id))
-            
             
             # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
             if len(child_id_list) == 0:
@@ -124,7 +136,6 @@ class TreeManager:
                 connector.complete_process(self.process_id)
                 return True
             
-
             
             #再帰
             for child_id in child_id_list:
