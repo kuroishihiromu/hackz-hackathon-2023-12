@@ -6,8 +6,8 @@ const WakeUpNode = ({label, top, left, wakeup}) => {
     const nodeStyle = {
 
         position: "absolute",
-        left: left || "50%",
-        top: top || "50%",
+        left: left,
+        top: top,
         borderRadius: "50%",
         width: "20px",
         height: "20px",

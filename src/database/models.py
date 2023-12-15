@@ -41,5 +41,16 @@ class Cluster(db.Model):
     
     # Userモデルで逆方向の関係性が既に定義済みなので、こちらは定義しない
 
+class Process(db.Model):
+    __tablename__ = 'processes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    process_id = db.Column(db.Integer)
+    depth_level = db.Column(db.Integer, default=0,nullable=False)
+    tree_index = db.Column(db.Integer, nullable=True)
+    status = db.Column(db.VARCHAR(12), default="waiting",nullable=False)
+    termination_flag = db.Column(db.Boolean, default=False,nullable=False)
+    create_at = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    start_at = db.Column(db.DateTime, nullable=True)
+    end_at = db.Column(db.DateTime, nullable=True)
 
 
