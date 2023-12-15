@@ -50,7 +50,8 @@ def test(index):
         loaded_object = pickle.load(f)
     
     # loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
-    proces_id = loaded_object[int(index)].start_threading_process(loaded_object[int(index)].root_user)
+    user_id = loaded_object[int(index)].root_user_id
+    proces_id = loaded_object[int(index)].start_threading_process(user_id)
     
     return str(proces_id)
 
@@ -71,7 +72,7 @@ def create_cluster():
     wake_up_rules = {}
     for cluster in cluster_manager.clusters:
         tree_manager = TreeManager(cluster)
-        tree_manager.create_tree()
+        tree_manager.create_tree(int(tree_index))
         tree_managers.append(tree_manager)
         wake_up_rules[tree_index] = str(cluster.middle_wake_up_time)
         tree_index += 1

@@ -13,11 +13,13 @@ class TreeManager:
     def __init__(self,Cluster):
         self.cluster = Cluster
         self.tree = nx.DiGraph()
-        self.root_user = None
+        self.root_user_id = None
         self.process_id = random.randint(10000000, 99999999)
+        self.tree_index = None
     
-    def create_tree(self):
+    def create_tree(self,tree_index):
         
+        self.tree_index = tree_index
         # clusterに所属するユーザーを取得
         users = self.cluster.users
         
@@ -31,7 +33,7 @@ class TreeManager:
 
         
         # 一番sleep_levelが高いユーザーをroot_userとする
-        self.root_user = sorted_users[0]
+        self.root_user_id = sorted_users[0].id
         
         # 空のdeque（キュー）を作成
         queue = deque()
@@ -66,18 +68,22 @@ class TreeManager:
                 self.tree.add_edge(sorted_users[6], user)
 
             count += 1
+        
+        # プロセスの登録
+        db.session.add(Process(id=self.process_id, tree_index=self.tree_index, status='waiting'))
+        db.session.commit()
 
         return True
     
-    def start_threading_process(self,user):
-        thread = threading.Thread(target=self.wake_up_child,args=(user,))
+    def start_threading_process(self,user_id):
+        thread = threading.Thread(target=self.wake_up_child,args=(user_id,))
         thread.start()
         connector = DBConnector('mysql://user:password@db:3306/mydatabase')
         connector.setup()
         connector.start_process(self.process_id)
         return self.process_id
     
-    def wake_up_child(self,user):
+    def wake_up_child(self,user_id):
         
         ####################################
         # ここでuserのアラームを鳴らす処理 #
@@ -87,7 +93,7 @@ class TreeManager:
         # userが起きたら次の処理へ
         while True:
             # userのstatusを更新
-            updated_user = connector.get_user(user.id)
+            updated_user = connector.get_user(user_id)
             
             if updated_user.status == True:
                 break
@@ -96,20 +102,18 @@ class TreeManager:
             time.sleep(5)
         
         # treeで自身を親に持つusersを取得
-        children = list(self.tree.successors(user))
+        children = list(self.tree.successors(updated_user))
         
         # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
         if len(children) == 0:
             return True
         
         # 全員が起きたら終了（木全体の終了条件）
-        if self.check_all_user_awake(connector):
-            # プロセスを終了（DBの処理を記述）
-            return True
+        self.check_process_completion_condition()
 
         #再帰
         for child in children:
-            self.wake_up_child(child)
+            self.wake_up_child(child.id)
 
     def check_all_user_awake(self,connector):
         # treeの全てのノードを取得
@@ -124,3 +128,23 @@ class TreeManager:
         # すべてのユーザーが起きている（活動している）場合
         return True
 
+    def check_all_user_awake(self,connector):
+            # treeの全てのノードを取得
+            nodes = list(self.tree.nodes)
+            for node in nodes:
+                user = connector.get_user(node.id)
+                
+                if not user or not user.status:
+                    # ユーザーが存在しない、またはユーザーのステータスが非活動の場合
+                    return False
+
+            # すべてのユーザーが起きている（活動している）場合
+            return True
+
+    def check_process_completion_condition(self,connector):
+        # 全員が起きている or 定期デーモンによって終了フラグが立てられていたら終了（木全体の終了条件）
+        if self.check_all_user_awake(connector) or connector.check_process_termination_flag(self.process_id):
+            connector.end_process(self.process_id)
+            return True
+        else:
+            return False
