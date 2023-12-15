@@ -34,8 +34,8 @@ const SignUp = () => {
     };
 
     return (
-        <div className="w-[60%] mx-auto bg-blue-500 rounded-[20px] mt-10 px-4 p-0">
-            <button onClick={handleSignUpToggle} className="text-white px-2 py-1 rounded-md text-[16px]">新規登録</button>
+        <div className="w-[60%] mx-auto bg-[#b8a1c5] rounded-[12px] mt-10 px-4 p-0 shadow-lg">
+            <button onClick={handleSignUpToggle} className="text-white px-2 py-5 text-[18px] font-semibold tracking-widest">新規登録</button>
             {showForm && (
                 <div className="text-[12px] mt-2">
                     <div>

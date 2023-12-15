@@ -6,8 +6,8 @@ const Top = () => {
     return(
         <>
             <div className="text-center">
-                <div>App Title</div>
-                <img src='/img/tree-icon.png' alt='tree-icon' className='w-[60%] mx-auto my-20'></img>
+                
+                <img src='/img/tree-icon.png' alt='tree-icon' className='w-[60%] mx-auto mt-10'></img>
                 <Login />
                 <SignUp />
             </div>

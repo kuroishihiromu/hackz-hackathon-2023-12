@@ -1,7 +1,7 @@
 // WakeUpTree.js
 import React, { useEffect, useState } from 'react';
 import WakeUpNode from './WakeUpNode';
-import WakeUpLine from './WakeUpLine';
+import AnimatedCurve from './AnimatedCurve';
 
 const WakeUpTree = () => {
   const [nodesData, setNodesData] = useState([
@@ -85,19 +85,15 @@ const WakeUpTree = () => {
   }, [nodesData]);
 
   return (
-    <div className='w-[80%] h-[500px] mx-auto relative'>
-      {nodesData.map((node, index) => {
-        const { left, top } = calcNodePosition(node.node_id);
-        return <WakeUpNode key={index} label={node.node_id} wakeup={node.wakeup} edge={node.edge} left={left} top={top} />;
-      })}
-      {nodesData.map((node, index)=> {
-        const {left, top} = calcNodePosition(node.node_id)
-        const parent = nodesData.find((n) => n.node_id === node.edge)
-        if (parent) {
-          return <WakeUpLine key={index} from={{left,top}} to={calcNodePosition(parent.node_id)} />
-        }
-      })}
-    </div>
+    <>
+      <div className='w-[80%] h-[500px] mx-auto relative'>
+        {nodesData.map((node, index) => {
+          const { left, top } = calcNodePosition(node.node_id);
+          return <WakeUpNode key={index} label={node.node_id} wakeup={node.wakeup} edge={node.edge} left={left} top={top} />;
+        })}
+      </div>
+      <AnimatedCurve/>
+    </>
   );
 };
 
