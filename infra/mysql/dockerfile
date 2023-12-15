@@ -9,6 +9,9 @@ RUN mkdir /var/log/mysql \
   && chown mysql:mysql /var/log/mysql \
   && chmod 777 /var/log/mysql
 
+# タイムゾーンの設定
+RUN apt-get install -y tzdata && \ ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
 # ポートの公開
 EXPOSE 3306
 
