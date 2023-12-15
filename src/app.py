@@ -88,16 +88,27 @@ def create_cluster():
         wake_up_rules[tree_index] = str(cluster.middle_wake_up_time)
         tree_index += 1
     
+    # 新しい辞書を作成
+    formatted_wake_up_rules = []
+    for index, time in wake_up_rules.items():
+        formatted_wake_up_rules.append({
+            "tree_index": str(index),
+            "set_time": time
+        })
+        
+    # JSONに変換
+    json_wake_up_rules = json.dumps(formatted_wake_up_rules)
+    
     # 今日の日付
     today = datetime.now().strftime('%Y%m%d')
     
-    # バイナリとして保存
+    # バイナリとして保存 TODO:時刻をつけて、その日の最新版が使われるように
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
         pickle.dump(tree_managers, file)  
         
-    # awsにデータを送信し、新規ルールを定義
-    aws_manager = AwsManager()
-    aws_manager.create_wake_up_rule(wake_up_rules)
+    # # awsにデータを送信し、新規ルールを定義
+    # aws_manager = AwsManager()
+    # aws_manager.create_wake_up_rule(wake_up_rules)
     
     
     return {
@@ -105,6 +116,7 @@ def create_cluster():
         'headers': {  # 必要に応じてHTTPヘッダーを設定
             'Content-Type': 'application/json'
         },
+        'rules':json_wake_up_rules,
         'body': json.dumps({  # レスポンス本文
             'message': '正常に実行されました。'
         })

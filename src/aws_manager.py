@@ -29,7 +29,7 @@ class AwsManager:
                 Name=str(today) + "_{}_tree_rule".format(key),
                 ScheduleExpression = self.convert_time_to_cron(value),
                 State='ENABLED',
-                Description='description'
+                Description='プロセス開始用ルール'
             )
             
             response = client.put_targets(
@@ -41,6 +41,14 @@ class AwsManager:
                         'Input': json.dumps({"tree_index": key})
                     }
                 ]
+            )
+            
+            # ルールを削除するためのルールを作成
+            response = client.put_rule(
+                Name=str(today) + "_{}_tree_rule_DELETE".format(key),
+                ScheduleExpression = self.convert_time_to_cron_use_delete(value),
+                State='ENABLED',
+                Description='イベント削除用ルール'
             )
             
         return True
@@ -68,19 +76,57 @@ class AwsManager:
     #     #         }
     #     #     ]
     #     # )
-    def convert_time_to_cron(self,time_str):
-        
-        # Split the time string into hours, minutes, and seconds
+    def convert_time_to_cron(self, time_str):
+        # 時間文字列を時、分、秒に分割
         parts = time_str.split(':')
 
-        # Check if the time string is valid
+        # 時間文字列の形式を確認
         if len(parts) != 3:
-            raise ValueError("Time must be in HH:MM:SS format")
+            raise ValueError("時間はHH:MM:SSの形式である必要があります")
 
-        # Extract hours and minutes
-        hours, minutes, _ = parts
+        # 時と分を取り出す
+        hours, minutes, _ = map(int, parts)
 
-        # Create the cron expression (seconds are ignored in standard cron format)
-        cron_expr = f"cron({minutes} {hours} * * ? *)"
+        # datetimeオブジェクトに変換
+        jst_time = datetime.now().replace(hour=hours, minute=minutes, second=0, microsecond=0)
+
+        # JSTからUTCへの変換（9時間引く）
+        utc_time = jst_time - timedelta(hours=9)
+
+        # 時間が負の数になった場合の調整
+        utc_hours = utc_time.hour
+        utc_minutes = utc_time.minute
+
+        # Cron式を生成（秒は標準のCron形式では無視される）
+        cron_expr = f"cron({utc_minutes} {utc_hours} * * ? *)"
+
+        return cron_expr
+
+    def convert_time_to_cron_use_delete(self, time_str):
+        # 時間文字列を時、分、秒に分割
+        parts = time_str.split(':')
+
+        # 時間文字列の形式を確認
+        if len(parts) != 3:
+            raise ValueError("時間はHH:MM:SSの形式である必要があります")
+
+        # 時と分を取り出す
+        hours, minutes, _ = map(int, parts)
+
+        # datetimeオブジェクトに変換
+        jst_time = datetime.now().replace(hour=hours, minute=minutes, second=0, microsecond=0)
+
+        # JSTからUTCへの変換（9時間引く）
+        utc_time = jst_time - timedelta(hours=9)
+        
+        # 二時間足す
+        utc_time = utc_time + timedelta(hours=2)
+
+        # 時間が負の数になった場合の調整
+        utc_hours = utc_time.hour
+        utc_minutes = utc_time.minute
+
+        # Cron式を生成（秒は標準のCron形式では無視される）
+        cron_expr = f"cron({utc_minutes} {utc_hours} * * ? *)"
 
         return cron_expr
