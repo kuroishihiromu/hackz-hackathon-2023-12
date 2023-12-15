@@ -79,7 +79,7 @@ class TreeManager:
         # userが起きたら次の処理へ
         while True:
             # userのstatusを更新
-            updated_user = User.query.filter(User.id == user.id).first()
+            updated_user = connector.get_user(user.id)
             
             if updated_user.status == True:
                 break
@@ -95,7 +95,7 @@ class TreeManager:
             return True
         
         # 全員が起きたら終了（木全体の終了条件）
-        if self.check_all_user_awake():
+        if self.check_all_user_awake(connector):
             # プロセスを終了（DBの処理を記述）
             return True
 
@@ -103,12 +103,12 @@ class TreeManager:
         for child in children:
             self.wake_up_child(child)
 
-    def check_all_user_awake(self):
+    def check_all_user_awake(self,connector):
         # treeの全てのノードを取得
         nodes = list(self.tree.nodes)
 
         for node in nodes:
-            user = User.query.filter(User.id == node.id).first()
+            user = connector.get_user(node.id)
             if not user or not user.status:
                 # ユーザーが存在しない、またはユーザーのステータスが非活動の場合
                 return False
