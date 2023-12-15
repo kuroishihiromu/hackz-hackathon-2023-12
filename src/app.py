@@ -28,7 +28,7 @@ app.config['SESSION_PERMANENT'] = False
 init_db(app) #環境変数の設定
 db.init_app(app) #DBの初期化
 migrate = Migrate(app, db) #マイグレーションの設定
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
 
 @app.route('/')
 def index():
@@ -182,19 +182,19 @@ nodes =[
     {"node_id": 1, "user_id": 1, "name":"Node1","wakeup":False,"created_at":"2023-01-01"},
 ]
 
-@socketio.on('update_node_wakeup')
-def handle_update_node_wakeup(data):
-    node_id = data["node_id"]
-    wakeup = data["wakeup"]
+# @socketio.on('update_node_wakeup')
+# def handle_update_node_wakeup(data):
+#     node_id = data["node_id"]
+#     wakeup = data["wakeup"]
 
-    for node in nodes:
-        if node["node_id"] == node_id:
-            node["wakeup"] = wakeup
-            break
+#     for node in nodes:
+#         if node["node_id"] == node_id:
+#             node["wakeup"] = wakeup
+#             break
     
-    socketio.emit("node_wakeup_updated",{"node_id":node_id,"wakeup":wakeup})
+#     socketio.emit("node_wakeup_updated",{"node_id":node_id,"wakeup":wakeup})
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(debug=True)
 
