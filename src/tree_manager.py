@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import pickle
 import random
 import threading
+from database.threading_db_conector import DBConnector
 
 
 class TreeManager:
@@ -73,8 +74,8 @@ class TreeManager:
         ####################################
         # ここでuserのアラームを鳴らす処理 #
         #################################### 
-        # connector = DBConnector('mysql://user:password@db:3306/mydatabase')
-        # connector.setup()
+        connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        connector.setup()
         # userが起きたら次の処理へ
         while True:
             # userのstatusを更新
