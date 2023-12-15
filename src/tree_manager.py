@@ -3,6 +3,7 @@ from database.models import *
 import networkx as nx
 from collections import deque
 from datetime import datetime, timedelta
+import time
 import pickle
 import random
 import threading
@@ -50,22 +51,22 @@ class TreeManager:
         count = 0
         while queue:
             user = queue.popleft()
-            self.tree.add_node(user)
+            self.tree.add_node(user.id)
 
             if count == 0:
                 self.root_user = user
             elif count <= 2:
-                self.tree.add_edge(sorted_users[count - 1], user)
+                self.tree.add_edge(sorted_users[count - 1].id, user.id)
             elif count <= 6:
-                self.tree.add_edge(sorted_users[2], user)
+                self.tree.add_edge(sorted_users[2].id, user.id)
             elif count <= 8:
-                self.tree.add_edge(sorted_users[3], user)
+                self.tree.add_edge(sorted_users[3].id, user.id)
             elif count <= 10:
-                self.tree.add_edge(sorted_users[4], user)
+                self.tree.add_edge(sorted_users[4].id, user.id)
             elif count <= 12:
-                self.tree.add_edge(sorted_users[5], user)
+                self.tree.add_edge(sorted_users[5].id, user.id)
             elif count <= 14:
-                self.tree.add_edge(sorted_users[6], user)
+                self.tree.add_edge(sorted_users[6].id, user.id)
 
             count += 1
         
@@ -101,19 +102,19 @@ class TreeManager:
             # 5秒待機
             time.sleep(5)
         
-        # treeで自身を親に持つusersを取得
-        children = list(self.tree.successors(updated_user))
+        # treeで自身を親に持つuserのidのリストを取得
+        child_id_list = list(self.tree.successors(updated_user.id))
         
         # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
-        if len(children) == 0:
+        if len(child_id_list) == 0:
             return True
         
         # 全員が起きたら終了（木全体の終了条件）
-        self.check_process_completion_condition()
+        self.check_process_completion_condition(connector)
 
         #再帰
-        for child in children:
-            self.wake_up_child(child.id)
+        for child_id in child_id_list:
+            self.wake_up_child(child_id)
 
     def check_all_user_awake(self,connector):
         # treeの全てのノードを取得
@@ -130,9 +131,9 @@ class TreeManager:
 
     def check_all_user_awake(self,connector):
             # treeの全てのノードを取得
-            nodes = list(self.tree.nodes)
-            for node in nodes:
-                user = connector.get_user(node.id)
+            node_id_list = list(self.tree.nodes)
+            for node_id in node_id_list:
+                user = connector.get_user(node_id)
                 
                 if not user or not user.status:
                     # ユーザーが存在しない、またはユーザーのステータスが非活動の場合
