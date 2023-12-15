@@ -89,7 +89,15 @@ def create_cluster():
     # aws_manager.create_wake_up_rule(wake_up_rules)
     
     
-    return "200"
+    return {
+        'statusCode': 200,  # HTTPステータスコード
+        'headers': {  # 必要に応じてHTTPヘッダーを設定
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps({  # レスポンス本文
+            'message': '正常に実行されました。'
+    })
+}
 
 
 

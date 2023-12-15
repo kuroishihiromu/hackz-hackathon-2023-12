@@ -75,6 +75,29 @@ class DBConnector:
         )
         session.commit()
         session.close()
+        
+    # 受け取ったuser_idリストのユーザーが全員起きているか確認
+    def check_users_status(self, user_id_list):
+        Session = sessionmaker(self.engine)
+        session = Session()
+        # 指定されたIDのユーザーを取得
+        result = session.execute(select(self.User).filter(self.User.id.in_(user_id_list)))
+        users = result.scalars().all()
+        session.close()
+        for user in users:
+            if user.status == False:
+                return False
+        return True
+    
+    # 指定されたorocess_idのプロセスのdepth_levelを取得
+    def get_process_depth(self, process_id):
+        Session = sessionmaker(self.engine)
+        session = Session()
+        # 指定されたIDのプロセスのdepth_levelを取得
+        result = session.execute(select(self.Process).filter(self.Process.process_id == process_id))
+        process = result.scalar_one_or_none()
+        session.close()
+        return process.depth_level
 
     def check_process_termination_flag(self, process_id):
         Session = sessionmaker(self.engine)
