@@ -49,9 +49,11 @@ def test(index):
     with open("./tree_logs/{}_trees.pkl".format(today), 'rb') as f:
         loaded_object = pickle.load(f)
     
-    loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
+    # loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
+    user_id = loaded_object[int(index)].root_user_id
+    proces_id = loaded_object[int(index)].start_threading_process(user_id)
     
-    return "ok"
+    return str(proces_id)
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):
@@ -70,7 +72,7 @@ def create_cluster():
     wake_up_rules = {}
     for cluster in cluster_manager.clusters:
         tree_manager = TreeManager(cluster)
-        tree_manager.create_tree()
+        tree_manager.create_tree(int(tree_index))
         tree_managers.append(tree_manager)
         wake_up_rules[tree_index] = str(cluster.middle_wake_up_time)
         tree_index += 1
@@ -82,9 +84,9 @@ def create_cluster():
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
         pickle.dump(tree_managers, file)  
         
-    # awsにデータを送信し、新規ルールを定義
-    aws_manager = AwsManager()
-    aws_manager.create_wake_up_rule(wake_up_rules)
+    # # awsにデータを送信し、新規ルールを定義
+    # aws_manager = AwsManager()
+    # aws_manager.create_wake_up_rule(wake_up_rules)
     
     
     return "200"
