@@ -8,6 +8,7 @@ mysqlclient  # MySQL用のPythonドライバ
 Faker
 networkx
 boto3
+flask-socketio
 PyMySQL
 asyncmy
 cryptography

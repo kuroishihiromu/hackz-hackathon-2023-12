@@ -1,5 +1,6 @@
 import React from "react";
 import SetTime from "./SetTime"
+import WakeUpTree from "./WakeUpTree";
 const Home = () => {
     
     return (
@@ -8,6 +9,7 @@ const Home = () => {
                 <h1>Home</h1>
                 <div>
                     render the tree...
+                    <WakeUpTree />
                 </div>
             </div>
             <SetTime />

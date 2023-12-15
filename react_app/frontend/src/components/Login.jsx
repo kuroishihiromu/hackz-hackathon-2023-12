@@ -31,8 +31,8 @@ const Login = () => {
     };
 
     return (
-        <div className="w-[60%] mx-auto bg-red rounded-[20px] mt-10 px-4 py-0 bg-blue-500">
-            <button onClick={handleLoginToggle} className="text-[16px]  text-white px-2 py-1 rounded-md">ログイン</button>
+        <div className="w-[60%] mx-auto bg-red rounded-[12px] px-4 py-0 bg-[#b8a1c5] shadow-lg">
+            <button onClick={handleLoginToggle} className="text-[18px]  text-white px-2 py-5 font-semibold tracking-widest">ログイン</button>
             {showForm && (
                 <div className="text-[14px] mt-2">
                     <div>
