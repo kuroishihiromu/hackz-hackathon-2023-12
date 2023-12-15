@@ -2,8 +2,7 @@ from sqlalchemy import create_engine, select, update
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
-import threading
-import random
+
 
 class DBConnector:
     def __init__(self, database_url):
@@ -61,27 +60,3 @@ class DBConnector:
         process = result.scalar_one_or_none()
         session.close()
         return process.termination_flag
-
-# 同期メイン関数
-def db():
-    connector = DBConnector('mysql://user:password@db:3306/mydatabase')
-    connector.setup()
-    # 1から１０のユーザーIDをランダムに選択
-    user_id = random.randint(1, 10)
-    user = connector.get_user(user_id)
-    print(user.name if user else "User not found")
-
-
-
-def test():
-    thread = threading.Thread(target=db)
-    thread.start()
-    return True
-
-def main():
-    for _ in range(10):
-        result = test()
-    print(f"Return value from test(): {result}")
-
-if __name__ == "__main__":
-    main()
