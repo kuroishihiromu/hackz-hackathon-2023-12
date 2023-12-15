@@ -82,9 +82,9 @@ def create_cluster():
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
         pickle.dump(tree_managers, file)  
         
-    # awsにデータを送信し、新規ルールを定義
-    aws_manager = AwsManager()
-    aws_manager.create_wake_up_rule(wake_up_rules)
+    # # awsにデータを送信し、新規ルールを定義
+    # aws_manager = AwsManager()
+    # aws_manager.create_wake_up_rule(wake_up_rules)
     
     
     return "200"

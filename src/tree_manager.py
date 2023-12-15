@@ -73,7 +73,8 @@ class TreeManager:
         ####################################
         # ここでuserのアラームを鳴らす処理 #
         #################################### 
-        
+        # connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        # connector.setup()
         # userが起きたら次の処理へ
         while True:
             # userのstatusを更新
