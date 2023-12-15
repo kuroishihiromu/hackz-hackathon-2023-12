@@ -52,6 +52,18 @@ class DBConnector:
         session.commit()
         session.close()
 
+    def complete_process(self, process_id):
+        Session = sessionmaker(self.engine)
+        session = Session()
+        # 指定されたIDのプロセスをterminatedに更新
+        session.execute(
+            update(self.Process)
+            .filter(self.Process.id == process_id)
+            .values(status='completed', end_at=datetime.now())
+        )
+        session.commit()
+        session.close()
+
     def check_process_termination_flag(self, process_id):
         Session = sessionmaker(self.engine)
         session = Session()

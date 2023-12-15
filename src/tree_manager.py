@@ -91,11 +91,19 @@ class TreeManager:
         #################################### 
         connector = DBConnector('mysql://user:password@db:3306/mydatabase')
         connector.setup()
+        
+
+        
         # userが起きたら次の処理へ
         while True:
+            
+            # 終了フラグを確認
+            if connector.check_process_termination_flag(self.process_id):
+                connector.end_process(self.process_id)
+                return True
+            
             # userのstatusを更新
             updated_user = connector.get_user(user_id)
-            
             if updated_user.status == True:
                 break
             
@@ -105,13 +113,18 @@ class TreeManager:
         # treeで自身を親に持つuserのidのリストを取得
         child_id_list = list(self.tree.successors(updated_user.id))
         
+        
         # 起きたuserの子供がいなければ終了(枝ごとの終了条件)
         if len(child_id_list) == 0:
             return True
         
         # 全員が起きたら終了（木全体の終了条件）
-        self.check_process_completion_condition(connector)
+        if self.check_all_user_awake(connector):
+            connector.complete_process(self.process_id)
+            return True
+        
 
+        
         #再帰
         for child_id in child_id_list:
             self.wake_up_child(child_id)
@@ -144,8 +157,12 @@ class TreeManager:
 
     def check_process_completion_condition(self,connector):
         # 全員が起きている or 定期デーモンによって終了フラグが立てられていたら終了（木全体の終了条件）
-        if self.check_all_user_awake(connector) or connector.check_process_termination_flag(self.process_id):
+        if self.check_all_user_awake(connector):
+            connector.complete_process(self.process_id)
+            return True
+        elif connector.check_process_termination_flag(self.process_id):
             connector.end_process(self.process_id)
             return True
+        
         else:
             return False
