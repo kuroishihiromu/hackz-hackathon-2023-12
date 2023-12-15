@@ -49,9 +49,10 @@ def test(index):
     with open("./tree_logs/{}_trees.pkl".format(today), 'rb') as f:
         loaded_object = pickle.load(f)
     
-    loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
+    # loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
+    proces_id = loaded_object[int(index)].start_threading_process(loaded_object[int(index)].root_user)
     
-    return "ok"
+    return str(proces_id)
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):

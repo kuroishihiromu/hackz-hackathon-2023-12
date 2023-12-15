@@ -68,7 +68,15 @@ class TreeManager:
             count += 1
 
         return True
-
+    
+    def start_threading_process(self,user):
+        thread = threading.Thread(target=self.wake_up_child,args=(user,))
+        thread.start()
+        connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        connector.setup()
+        connector.start_process(self.process_id)
+        return self.process_id
+    
     def wake_up_child(self,user):
         
         ####################################
