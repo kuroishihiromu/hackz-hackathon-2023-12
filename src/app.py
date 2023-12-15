@@ -53,7 +53,18 @@ def test(index):
     user_id = loaded_object[int(index)].root_user_id
     proces_id = loaded_object[int(index)].start_threading_process(user_id)
     
-    return str(proces_id)
+    return {
+        'statusCode': 200,  # HTTPステータスコード
+        'headers': {  # 必要に応じてHTTPヘッダーを設定
+            'Content-Type': 'application/json'
+        },
+        '': {
+            
+        },
+        'body': json.dumps({  # レスポンス本文
+            'message': '正常に実行されました。'
+        })
+    }
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):
@@ -84,9 +95,9 @@ def create_cluster():
     with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
         pickle.dump(tree_managers, file)  
         
-    # # awsにデータを送信し、新規ルールを定義
-    # aws_manager = AwsManager()
-    # aws_manager.create_wake_up_rule(wake_up_rules)
+    # awsにデータを送信し、新規ルールを定義
+    aws_manager = AwsManager()
+    aws_manager.create_wake_up_rule(wake_up_rules)
     
     
     return {
@@ -96,8 +107,8 @@ def create_cluster():
         },
         'body': json.dumps({  # レスポンス本文
             'message': '正常に実行されました。'
-    })
-}
+        })
+    }
 
 
 

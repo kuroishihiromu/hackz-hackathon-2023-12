@@ -37,12 +37,13 @@ class AwsManager:
                 Targets=[
                     {
                         'Id': '1',
-                        'Arn': "rule['arn']",
-                        'Input': {"tree_index":key}
+                        'Arn': "arn:aws:lambda:ap-northeast-1:087162124036:function:wake_up_user",
+                        'Input': json.dumps({"tree_index": key})
                     }
                 ]
             )
-        
+            
+        return True
     # def create_rule(self):  # Added 'self' here
     #     client = boto3.client(
     #         'events',
