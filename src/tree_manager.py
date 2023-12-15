@@ -17,6 +17,7 @@ class TreeManager:
         self.root_user_id = None
         self.process_id = random.randint(10000000, 99999999)
         self.tree_index = None
+        self.depth_level = 0
     
     def create_tree(self,tree_index):
         
@@ -92,8 +93,10 @@ class TreeManager:
             connector = DBConnector('mysql://user:password@db:3306/mydatabase')
             connector.setup()
             
-            # # 深さnのノードを取得
-            # nodes = [node for node in self.tree.nodes if nx.shortest_path_length(self.tree, self.root_user_id, node) == depth]
+            #木の深さを取得
+            depth = nx.dag_longest_path_length(self.tree)
+            connector.update_depth(self.process_id, depth)
+            
             
             # userが起きたら次の処理へ
             while True:

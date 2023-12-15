@@ -63,6 +63,18 @@ class DBConnector:
         )
         session.commit()
         session.close()
+    
+    def update_depth(self, process_id, depth):
+        Session = sessionmaker(self.engine)
+        session = Session()
+        # 指定されたIDのプロセスをterminatedに更新
+        session.execute(
+            update(self.Process)
+            .filter(self.Process.process_id == process_id)
+            .values(depth_level=depth)
+        )
+        session.commit()
+        session.close()
 
     def check_process_termination_flag(self, process_id):
         Session = sessionmaker(self.engine)
