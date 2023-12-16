@@ -8,7 +8,6 @@ from tree_manager import TreeManager
 from aws_manager import AwsManager
 import json
 import pickle
-from flask_socketio import SocketIO
 
 #自作のdatabaseモジュールをインポート
 from database.models import *

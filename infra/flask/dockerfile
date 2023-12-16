@@ -15,7 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN apt-get update && apt-get install -y default-mysql-client
 
 # タイムゾーンの設定
-RUN apt-get install -y tzdata && \ ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+RUN apt-get install -y tzdata
+RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
 
 # ポートの公開
 EXPOSE 5000
