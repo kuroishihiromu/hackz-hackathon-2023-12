@@ -9,6 +9,10 @@ from aws_manager import AwsManager
 import json
 import pickle
 
+import os
+import glob
+from datetime import datetime
+
 #自作のdatabaseモジュールをインポート
 from database.models import *
 from database.seeder import *
@@ -45,26 +49,30 @@ def test(index):
     # 今日の日付
     today = datetime.now().strftime('%Y%m%d')
     
-    # piklからtree_managersを読み込み
-    with open("./tree_logs/{}_trees.pkl".format(today), 'rb') as f:
-        loaded_object = pickle.load(f)
+    # 指定された日付のファイルを検索
+    file_pattern = "./tree_logs/{}_trees_*.pkl".format(today)
+    file_list = glob.glob(file_pattern)
+
+    # ファイルが存在する場合、最新のファイルを見つける
+    if file_list:
+        latest_file = max(file_list, key=os.path.getmtime)
+        print(f"Using the latest file: {latest_file}")
+
+        # 最新のファイルからtree_managersを読み込む
+        with open(latest_file, 'rb') as f:
+            loaded_object = pickle.load(f)
+    else:
+        print(f"No files found for pattern: {file_pattern}")
+        # 適切なエラーハンドリングか、デフォルトの動作をここに記述
     
     # loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
     user_id = loaded_object[int(index)].root_user_id
     proces_id = loaded_object[int(index)].start_threading_process(user_id)
     
-    return {
-        'statusCode': 200,  # HTTPステータスコード
-        'headers': {  # 必要に応じてHTTPヘッダーを設定
-            'Content-Type': 'application/json'
-        },
-        '': {
-            
-        },
-        'body': json.dumps({  # レスポンス本文
-            'message': '正常に実行されました。'
-        })
-    }
+    return jsonify({
+        'message': '正常に実行されました。',
+        'process_id': proces_id
+    })
 
 @app.route('/seed/<num>', methods=['GET'])
 def seeder(num):
@@ -101,16 +109,19 @@ def create_cluster():
     
     # 今日の日付
     today = datetime.now().strftime('%Y%m%d')
+    current_time = datetime.now().strftime('%H%M%S')
     
-    # バイナリとして保存 TODO:時刻をつけて、その日の最新版が使われるように
-    with open('./tree_logs/{}_trees.pkl'.format(today), 'wb') as file:
-        pickle.dump(tree_managers, file)  
+    # ファイル名に日付と時刻を追加
+    filename = './tree_logs/{}_trees_{}.pkl'.format(today, current_time)
+
+    # バイナリとしてファイルに保存
+    with open(filename, 'wb') as file:
+        pickle.dump(tree_managers, file)
         
     # # awsにデータを送信し、新規ルールを定義
     # aws_manager = AwsManager()
     # aws_manager.create_wake_up_rule(wake_up_rules)
     
-        
     return jsonify({
         'message': '正常に実行されました。',
         'rules': formatted_wake_up_rules
@@ -173,9 +184,9 @@ def set_time():
 
     return jsonify({'success':True})
 
-nodes =[
-    {"node_id": 1, "user_id": 1, "name":"Node1","wakeup":False,"created_at":"2023-01-01"},
-]
+# nodes =[
+#     {"node_id": 1, "user_id": 1, "name":"Node1","wakeup":False,"created_at":"2023-01-01"},
+# ]
 
 # @socketio.on('update_node_wakeup')
 # def handle_update_node_wakeup(data):
