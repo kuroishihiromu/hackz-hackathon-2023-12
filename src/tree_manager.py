@@ -17,6 +17,8 @@ class TreeManager:
         self.root_user_id = None
         self.process_id = random.randint(10000000, 99999999)
         self.tree_index = None
+        self.sorted_users = []
+        self.user_id_list = []
     
     def create_tree(self,tree_index):
         
@@ -28,19 +30,23 @@ class TreeManager:
         ten_days_ago = datetime.now() - timedelta(days=10)
         
         # 過去10日間の設定のみを考慮して平均値を計算し、その平均値でユーザーを降順にソート
-        sorted_users = sorted(users, reverse=True, key=lambda x: 
+        self.sorted_users = sorted(users, reverse=True, key=lambda x: 
             sum(setting.yesterday_sleep_level for setting in x.settings if setting.setting_at >= ten_days_ago)
             / len([setting for setting in x.settings if setting.setting_at >= ten_days_ago]))
+        
+        # self.sorted_usersからuser_id_listを作成
+        for user in self.sorted_users:
+            self.user_id_list.append(user.id)
 
         
         # 一番sleep_levelが高いユーザーをroot_userとする
-        self.root_user_id = sorted_users[0].id
+        self.root_user_id = self.sorted_users[0].id
         
         # 空のdeque（キュー）を作成
         queue = deque()
         
         # キューに要素を追加
-        for user in sorted_users:
+        for user in self.sorted_users:
             queue.append(user)
         
         ################
@@ -56,17 +62,17 @@ class TreeManager:
             if count == 0:
                 self.root_user = user
             elif count <= 2:
-                self.tree.add_edge(sorted_users[count - 1].id, user.id)
+                self.tree.add_edge(self.sorted_users[count - 1].id, user.id)
             elif count <= 6:
-                self.tree.add_edge(sorted_users[2].id, user.id)
+                self.tree.add_edge(self.sorted_users[2].id, user.id)
             elif count <= 8:
-                self.tree.add_edge(sorted_users[3].id, user.id)
+                self.tree.add_edge(self.sorted_users[3].id, user.id)
             elif count <= 10:
-                self.tree.add_edge(sorted_users[4].id, user.id)
+                self.tree.add_edge(self.sorted_users[4].id, user.id)
             elif count <= 12:
-                self.tree.add_edge(sorted_users[5].id, user.id)
+                self.tree.add_edge(self.sorted_users[5].id, user.id)
             elif count <= 14:
-                self.tree.add_edge(sorted_users[6].id, user.id)
+                self.tree.add_edge(self.sorted_users[6].id, user.id)
 
             count += 1
         
@@ -185,3 +191,54 @@ class TreeManager:
         
         else:
             return False
+
+    def get_tree_state(self):
+        
+        nodes_data = [
+            { "node_id": 1, "wakeup": False, "edge": 0 },
+            { "node_id": 2, "wakeup": False, "edge": 1 },
+            { "node_id": 3, "wakeup": False, "edge": 2 },
+            { "node_id": 4, "wakeup": False, "edge": 3 },
+            { "node_id": 5, "wakeup": False, "edge": 3 },
+            { "node_id": 6, "wakeup": False, "edge": 3 },
+            { "node_id": 7, "wakeup": False, "edge": 3 },
+            { "node_id": 8, "wakeup": False, "edge": 4 },
+            { "node_id": 9, "wakeup": False, "edge": 4 },
+            { "node_id": 10, "wakeup": False, "edge": 5 },
+            { "node_id": 11, "wakeup": False, "edge": 5 },
+            { "node_id": 12, "wakeup": False, "edge": 6 },
+            { "node_id": 13, "wakeup": False, "edge": 6 },
+            { "node_id": 14, "wakeup": False, "edge": 7 },
+            { "node_id": 15, "wakeup": False, "edge": 7 }
+        ]
+        
+        connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        connector.setup()
+        
+        # DB接続のセットアップ
+        connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        connector.setup()
+
+        # 再帰的に根までたどる関数
+        def can_reach_root(node_id):
+            if node_id == 1:
+                return True
+            parent_node_id = next((item for item in nodes_data if item["node_id"] == node_id), None)["edge"]
+            if parent_node_id and nodes_data[parent_node_id - 1]["wakeup"]:
+                return can_reach_root(parent_node_id)
+            else:
+                return False
+
+        # 各ノードの状態を更新
+        for line in nodes_data:
+            user_status = connector.get_user(self.user_id_list[line["node_id"] - 1]).status
+            if user_status and can_reach_root(line["node_id"]):
+                line["wakeup"] = True
+            else:
+                line["wakeup"] = False
+
+        # nodes_dataからwakeupがTrueのものを抽出
+        nodes_data = [line for line in nodes_data if line["wakeup"]]
+
+        return nodes_data
+
