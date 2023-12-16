@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 9f9c0dfb5e34
+Revision ID: b3ec01b40ebc
 Revises: 
-Create Date: 2023-12-09 07:09:47.404067
+Create Date: 2023-12-16 12:35:58.819024
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9f9c0dfb5e34'
+revision = 'b3ec01b40ebc'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,18 @@ def upgrade():
     sa.Column('create_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('processes',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('process_id', sa.Integer(), nullable=True),
+    sa.Column('depth_level', sa.Integer(), nullable=False),
+    sa.Column('tree_index', sa.Integer(), nullable=True),
+    sa.Column('status', sa.VARCHAR(length=12), nullable=False),
+    sa.Column('termination_flag', sa.Boolean(), nullable=False),
+    sa.Column('create_at', sa.DateTime(), nullable=False),
+    sa.Column('start_at', sa.DateTime(), nullable=True),
+    sa.Column('end_at', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('users',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('device_id', sa.VARCHAR(length=12), nullable=False),
@@ -31,6 +43,7 @@ def upgrade():
     sa.Column('email', sa.VARCHAR(length=48), nullable=False),
     sa.Column('password', sa.VARCHAR(length=12), nullable=False),
     sa.Column('is_bot', sa.Boolean(), nullable=False),
+    sa.Column('status', sa.Boolean(), nullable=False),
     sa.Column('create_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('device_id'),
@@ -62,5 +75,6 @@ def downgrade():
     op.drop_table('settings')
     op.drop_table('cluster_user')
     op.drop_table('users')
+    op.drop_table('processes')
     op.drop_table('clusters')
     # ### end Alembic commands ###
