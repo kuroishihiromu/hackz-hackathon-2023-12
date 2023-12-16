@@ -5,17 +5,16 @@ const pathsData = [
   {startX:180, startY:420, controlX:180,controlY:410,endX:180,endY:350},
   {startX:180, startY:350, controlX:150,controlY:265,endX:100,endY:290},
   {startX:180, startY:350, controlX:180,controlY:280,endX:140,endY:240},
-  {startX:180, startY:350, controlX:185,controlY:280,endX:210,endY:240},
+  {startX:180, startY:350, controlX:205,controlY:270,endX:210,endY:240},
   {startX:180, startY:350, controlX:200,controlY:285,endX:257.25,endY:285},
   {startX:90, startY:285, controlX:30,controlY:250,endX:10,endY:260},
   {startX:90, startY:285, controlX:0,controlY:300,endX:50,endY:210},
-  {startX:140, startY:240, controlX:190,controlY:200,endX:70,endY:100},
-  {startX:0, startY:0, controlX:0,controlY:0,endX:0,endY:0},
-  {startX:0, startY:0, controlX:0,controlY:0,endX:0,endY:0},
-  {startX:0, startY:0, controlX:0,controlY:0,endX:0,endY:0},
-  {startX:0, startY:0, controlX:0,controlY:0,endX:0,endY:0},
-  {startX:0, startY:0, controlX:0,controlY:0,endX:0,endY:0},
-  {startX:0, startY:0, controlX:0,controlY:0,endX:0,endY:0}
+  {startX:140, startY:235, controlX:160,controlY:180,endX:80,endY:160},
+  {startX:140, startY:235, controlX:100,controlY:200,endX:130,endY:140},
+  {startX:210, startY:240, controlX:160,controlY:200,endX:210,endY:130},
+  {startX:210, startY:240, controlX:220,controlY:150,endX:270,endY:160},
+  {startX:270, startY:287, controlX:300,controlY:300,endX:300,endY:210},
+  {startX:270, startY:287, controlX:250,controlY:230,endX:340,endY:255},
 ]
 
 const AnimatedCurve = () => {
