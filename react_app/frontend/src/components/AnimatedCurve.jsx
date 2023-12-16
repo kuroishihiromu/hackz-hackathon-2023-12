@@ -14,23 +14,24 @@ const AnimatedCurve = () => {
   const controlX = 220;
   const controlY = 20;
   const endX = 220;
-  const endY = -200;
+  const endY = 200;
 
   return (
-    <div style={{ position: 'relative', height: '200px', width: '400px' }}>
-      <svg width="400" height="200">
-        <path
-          id="animatedPath"
-          d={`M${startX} ${startY} Q${controlX} ${controlY} ${endX} ${endY}`}
-          fill="transparent"
-          stroke="#000"
-          strokeWidth="2"
-          strokeDasharray={pathLength}
-          strokeDashoffset={pathLength}
-          style={{
-            animation: 'draw 2s linear forwards',
-          }}
-        />
+    <div style={{ position: 'absolute', height: '500px', width: '400px', zIndex:'30'}}>
+      <svg width="400" height="400">
+          <path
+            id="animatedPath"
+            d={`M${startX} ${startY} Q${controlX} ${controlY} ${endX} ${endY}`}
+            fill="transparent"
+            stroke="#000"
+            strokeWidth="2"
+            strokeDasharray={pathLength}
+            strokeDashoffset={pathLength}
+            style={{
+              animation: 'draw 2s linear forwards',
+              
+            }}
+          />
         <text x={startX} y={startY - 10} textAnchor="middle" fontSize="12" fill="#000">
           始点
         </text>

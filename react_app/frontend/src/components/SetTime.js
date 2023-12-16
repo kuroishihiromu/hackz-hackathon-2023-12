@@ -28,12 +28,12 @@ const SetTime = () => {
     };
 
     return (
-        <div className="w-[60%] mx-auto bg-red rounded-[20px] mt-10 px-4 py-0 bg-blue-500">
-            <button onClick={handleSetTimeToggle} className="text-[16px] text-white px-2 py-1 rounded-md">時間を設定</button>
+        <div className="w-[80%] mx-auto bg-red rounded-[12px]  px-10 py-3 bg-[#b8a1c5] text-center shadow-lg">
+            <button onClick={handleSetTimeToggle} className="text-[18px] text-white px-2 py-1 font-semibold">時間を設定</button>
             {showForm && (
-                <div className="text-[14px] mt-2">
-                    <div>
-                        <label htmlFor="wakeUpTime">時間を設定</label>
+                <div className="text-[16px] mt-2 ">
+                    <div className="my-2 border-y py-2">
+                        <label htmlFor="wakeUpTime"><div className="mx-3 text-white">起きる時間</div></label>
                         <input
                             type="time"
                             id="wakeUpTime"
@@ -43,7 +43,7 @@ const SetTime = () => {
                         />
                     </div>
                     <div>
-                        <label className="mt-2">今朝はよく眠れましたか？</label>
+                        <label className="mt-5 text-white block mb-2">今朝はよく眠れましたか？</label>
                         <div className="flex justify-between">
                             {[1, 2, 3, 4, 5].map((value) => (
                                 <div key={value} >

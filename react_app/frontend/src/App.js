@@ -8,20 +8,6 @@ import Home from './components/Home'
 import {BrowserRouter,Route, Routes} from 'react-router-dom'
 
 
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <div className="text-4xl text-center">
-//         <Top />
-//         <Login />
-//         <SignUp />  
-//         <Routes>
-//           <Route path='/home' element={<Home />} />
-//         </Routes>
-//       </div>
-//     </BrowserRouter>
-//   );
-// }
 
 function App() {
   return (

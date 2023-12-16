@@ -55,7 +55,9 @@ const Login = () => {
                             className="border rounded-md px-2 py-1"
                         />
                     </div>
-                    <button onClick={handleLogin} className="bg-green-500 text-white px-2 rounded-md my-2">送信</button>
+                    <button onClick={handleLogin} className="bg-[#b9c42f] text-white px-2 rounded-md my-10 block shadow-lg">
+                        送信
+                    </button>
                 </div>
             )}
         </div>

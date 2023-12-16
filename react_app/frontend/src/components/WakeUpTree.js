@@ -86,13 +86,13 @@ const WakeUpTree = () => {
 
   return (
     <>
-      <div className='w-[80%] h-[500px] mx-auto relative'>
+      <div className='w-[80%] h-[500px] mx-auto relative z-10 shadow-lg'>
         {nodesData.map((node, index) => {
           const { left, top } = calcNodePosition(node.node_id);
           return <WakeUpNode key={index} label={node.node_id} wakeup={node.wakeup} edge={node.edge} left={left} top={top} />;
         })}
+        <AnimatedCurve/>
       </div>
-      <AnimatedCurve/>
     </>
   );
 };

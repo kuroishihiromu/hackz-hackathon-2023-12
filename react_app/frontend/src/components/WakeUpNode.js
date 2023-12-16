@@ -17,7 +17,7 @@ const WakeUpNode = ({label, top, left, wakeup}) => {
 
     return (
       <>
-        <div style={nodeStyle}>
+        <div style={nodeStyle} className="z-40">
             <span>{label}</span>
         </div>
       </>
