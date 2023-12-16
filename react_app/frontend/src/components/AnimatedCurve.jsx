@@ -30,15 +30,6 @@ const AnimatedCurve = () => {
     }
     setPathLengths(lengths);
   }, []);
-
-  // const paths = Array.from({ length: 15 }, (_, i) => i + 1);
-  // const startXs =[171.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  // const startYs = [500,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  // const controlXs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  // const controlYs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  // const endXs = [171.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  // const endYs = [10,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-
   return (
     <div style={{ position: 'absolute', height: '500px', width: '343px', zIndex: '30' }}>
       <svg width="343" height="500">
