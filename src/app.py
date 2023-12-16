@@ -66,8 +66,8 @@ def test(index):
         # 適切なエラーハンドリングか、デフォルトの動作をここに記述
     
     # loaded_object[int(index)].wake_up_child(loaded_object[int(index)].root_user)
-    user_id = loaded_object[int(index)].root_user_id
-    proces_id = loaded_object[int(index)].start_threading_process(user_id)
+    user_id = loaded_object[int(index)-1].root_user_id
+    proces_id = loaded_object[int(index)-1].start_threading_process(user_id)
     
     return jsonify({
         'message': '正常に実行されました。',
