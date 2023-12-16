@@ -63,9 +63,7 @@ const WakeUpTree = () => {
 
   useEffect(() => {
     // ソケットからのデータ更新をシミュレート
-    const simulatedDataUpdate = [
-      { node_id: 3, wakeup: true },
-    ];
+    let simulatedDataUpdate = [];
     const fetchData = async () => {
       try{
       
