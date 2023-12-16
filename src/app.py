@@ -87,7 +87,7 @@ def create_cluster():
     cluster_manager.init_cluster()
     
     tree_managers = []
-    tree_index = 0
+    tree_index = 1
     wake_up_rules = {}
     for cluster in cluster_manager.clusters:
         tree_manager = TreeManager(cluster)
@@ -268,7 +268,44 @@ def tree_state_test(user_id):
 
 
 
+@app.route('/get_depth_level/<device_id>', methods=['GET'])
+def get_depth_level(device_id):
+    user = User.query.filter(User.device_id == device_id).first()
+    
+    # ユーザーが所属するクラスターの中で最新のものを取得
+    # cluster_id = user.clusters.order_by(ClusterUser.create_at.desc()).first().cluster_id
+    cluster_id = db.session.query(ClusterUser).filter_by(user_id=user.id).order_by(ClusterUser.create_at.desc()).first().id
+    
+    # cluster_idをもとに、tree_indexを取得
+    
+    # 今日の日付
+    today = datetime.now().strftime('%Y%m%d')
+    
+    # 指定された日付のファイルを検索
+    file_pattern = "./tree_logs/{}_trees_*.pkl".format(today)
+    file_list = glob.glob(file_pattern)
 
+    # ファイルが存在する場合、最新のファイルを見つける
+    if file_list:
+        latest_file = max(file_list, key=os.path.getmtime)
+        print(f"Using the latest file: {latest_file}")
+
+        # 最新のファイルからtree_managersを読み込む
+        with open(latest_file, 'rb') as f:
+            loaded_object = pickle.load(f)
+    else:
+        print(f"No files found for pattern: {file_pattern}")
+        
+    for tree_manager in loaded_object:
+        if cluster_id == tree_manager.cluster_id:
+            break
+    
+    
+    return jsonify({
+        'depth_level'
+        : Process.query.filter(Process.process_id == tree_manager.process_id).order_by(Process.create_at.desc()).first().depth_level
+    })
+    
 if __name__ == '__main__':
     app.run(debug=True)
 

@@ -13,6 +13,7 @@ from database.threading_db_conector import DBConnector
 class TreeManager:
     def __init__(self,Cluster):
         self.cluster = Cluster
+        self.cluster_id = Cluster.id
         self.tree = nx.DiGraph()
         self.root_user_id = None
         self.process_id = random.randint(10000000, 99999999)
