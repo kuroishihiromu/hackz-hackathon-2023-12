@@ -34,7 +34,7 @@ const SignUp = () => {
     };
 
     return (
-        <div className="w-[60%] mx-auto bg-[#b8a1c5] rounded-[12px] mt-10 px-4 p-0 shadow-lg">
+        <div className="w-[60%] mx-auto bg-[#b8a1c5] rounded-[12px] mt-10 px-4 p-0 shadow-lg mb-20">
             <button onClick={handleSignUpToggle} className="text-white px-2 py-5 text-[18px] font-semibold tracking-widest">新規登録</button>
             {showForm && (
                 <div className="text-[12px] mt-2">
