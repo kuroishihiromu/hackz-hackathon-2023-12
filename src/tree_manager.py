@@ -220,26 +220,50 @@ class TreeManager:
         connector = DBConnector('mysql://user:password@db:3306/mydatabase')
         connector.setup()
 
+        def get_parent_node(graph, node_id):
+
+            # ノードの親ノードを取得
+            parents = graph.predecessors(node)[0]
+            
+            # 親が存在する場合は親ノードを返す
+            if parents:
+                return parents[0]
+            else:
+                return None  # 親が存在しない場合はNoneを返す
+
         # 再帰的に根までたどる関数
         def can_reach_root(node_id):
             if node_id == 1:
                 return True
-            parent_node_id = next((item for item in nodes_data if item["node_id"] == node_id), None)["edge"]
-            if parent_node_id and nodes_data[parent_node_id - 1]["wakeup"]:
+                
+            predecessors = list(self.tree.predecessors(node_id))
+            if predecessors:
+                parent_node_id = predecessors[0]
+            else:
+                # リストが空の場合の処理
+                parent_node_id = None  # またはエラーを発生させるか、デフォルト値を設定するなど
+
+            if parent_node_id and connector.get_user(parent_node_id):
                 return can_reach_root(parent_node_id)
             else:
                 return False
 
         # 各ノードの状態を更新
+        print(nodes_data)
         for line in nodes_data:
-            user_status = connector.get_user(self.user_id_list[line["node_id"] - 1]).status
-            if user_status and can_reach_root(line["node_id"]):
+            print(line)
+            user_tmp = connector.get_user(self.user_id_list[line["node_id"]-1])
+            if user_tmp.status and can_reach_root(user_tmp.id):
                 line["wakeup"] = True
             else:
                 line["wakeup"] = False
+            print("user_id_list:", self.user_id_list)
+            print("node_id:", line["node_id"])
+
 
         # nodes_dataからwakeupがTrueのものを抽出
         nodes_data = [line for line in nodes_data if line["wakeup"]]
 
         return nodes_data
+
 

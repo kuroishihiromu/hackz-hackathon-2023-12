@@ -234,6 +234,37 @@ def tree_state():
     
     return tree_manager.get_tree_state()
 
+@app.route('/tree_state_test/<user_id>', methods=['GET'])
+def tree_state_test(user_id):
+
+    
+    # 今日の日付
+    today = datetime.now().strftime('%Y%m%d')
+    
+    # 指定された日付のファイルを検索
+    file_pattern = "./tree_logs/{}_trees_*.pkl".format(today)
+    file_list = glob.glob(file_pattern)
+
+    # ファイルが存在する場合、最新のファイルを見つける
+    if file_list:
+        latest_file = max(file_list, key=os.path.getmtime)
+        print(f"Using the latest file: {latest_file}")
+
+        # 最新のファイルからtree_managersを読み込む
+        with open(latest_file, 'rb') as f:
+            loaded_object = pickle.load(f)
+    else:
+        print(f"No files found for pattern: {file_pattern}")
+        
+    for tree_manager in loaded_object:
+        if user_id in tree_manager.user_id_list:
+            break
+    
+    # ルートノードの情報を取得
+    
+    return jsonify({tree_manager.get_tree_state()})
+    
+    
 
 
 @app.route('/get_depth_level/<device_id>', methods=['GET'])
