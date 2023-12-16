@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import WakeUpNode from './WakeUpNode';
 import AnimatedCurve from './AnimatedCurve';
-
+import axios from 'axios'
 const WakeUpTree = () => {
   
   const [nodesData, setNodesData] = useState([
@@ -71,11 +71,11 @@ const WakeUpTree = () => {
       
         const user_id = sessionStorage.getItem('userid')
     
-        if(userid){
-          const response = await axios.post('http://localhost:5000/tree_state_test', {userid})
+        if(user_id){
+          const response = await axios.post('http://localhost:5000/tree_state', {user_id})
           const responseData = response.data
     
-          simulatedDataUpdate = [{node_id:responseData["node_id"], wakeup:resoinseData["wakeup"]}]
+          simulatedDataUpdate = [{node_id:responseData["node_id"], wakeup:responseData["wakeup"]}]
           const nodeId = simulatedDataUpdate[0]?.node_id
           setSimulatedNodeId(nodeId)
       

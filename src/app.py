@@ -200,13 +200,10 @@ def set_time():
     
 #     socketio.emit("node_wakeup_updated",{"node_id":node_id,"wakeup":wakeup})
 
+
+
 @app.route('/tree_state', methods=['POST'])
 def tree_state():
-
-    
-
-@app.route('/tree_state_test', methods=['POST'])
-def tree_state_test():
 
     data = request.get_json()
     user_id = data['user_id']
