@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import WakeUpNode from './WakeUpNode';
 import AnimatedCurve from './AnimatedCurve';
-
+import axios from 'axios'
 const WakeUpTree = () => {
   
   const [nodesData, setNodesData] = useState([
@@ -66,22 +66,45 @@ const WakeUpTree = () => {
     const simulatedDataUpdate = [
       { node_id: 3, wakeup: true },
     ];
-
-    const nodeId = simulatedDataUpdate[0]?.node_id
-    setSimulatedNodeId(nodeId)
-
-    const updatedNodesData = nodesData.map((node) => {
-      const update = simulatedDataUpdate.find((update) => update.node_id === node.node_id);
-      if (update && node.wakeup !== update.wakeup) {
-        return { ...node, wakeup: update.wakeup };
-      } else {
-        return node;
+    const fetchData = async () => {
+      try{
+      
+        const user_id = sessionStorage.getItem('userid')
+    
+        if(user_id){
+          const response = await axios.post('http://localhost:5000/tree_state', {user_id})
+          const responseData = response.data
+    
+          simulatedDataUpdate = [{node_id:responseData["node_id"], wakeup:responseData["wakeup"]}]
+          const nodeId = simulatedDataUpdate[0]?.node_id
+          setSimulatedNodeId(nodeId)
+      
+          const updatedNodesData = nodesData.map((node) => {
+            const update = simulatedDataUpdate.find((update) => update.node_id === node.node_id);
+            if (update && node.wakeup !== update.wakeup) {
+              return { ...node, wakeup: update.wakeup };
+            } else {
+              return node;
+            }
+          });
+      
+          if (JSON.stringify(nodesData) !== JSON.stringify(updatedNodesData)) {
+            setNodesData(updatedNodesData);
+          }
+        } else {
+          console.error('User ID not found in session storage');
+        }
+      }catch(error){
+        console.error('Error during post request', error)
       }
-    });
-
-    if (JSON.stringify(nodesData) !== JSON.stringify(updatedNodesData)) {
-      setNodesData(updatedNodesData);
     }
+
+    fetchData()
+
+    const intervalId = setInterval(() => {
+      fetchData()
+    }, 5000)
+    
   }, [nodesData]);
 
   return (
