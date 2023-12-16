@@ -7,7 +7,7 @@ const Top = () => {
         <>
             <div className="text-center">
                 
-                <img src='/img/tree-icon.png' alt='tree-icon' className='w-[60%] mx-auto mt-10'></img>
+                <img src='/img/tree-icon.png' alt='tree-icon' className='w-[70%] mx-auto mt-10'></img>
                 <Login />
                 <SignUp />
             </div>

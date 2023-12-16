@@ -2,7 +2,7 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Top from "./components/Top";
-import Home from "./components/Home";
+import Home from "./Home";
 
 const AppRouter = createBrowserRouter([
     {path: "/", element: <Top />},

@@ -3,7 +3,7 @@ import './App.css'
 import Top from './components/Top'
 import Login from './components/Login'
 import SignUp from './components/Signup'
-import Home from './components/Home'
+import Home from './Home'
 
 import {BrowserRouter,Route, Routes} from 'react-router-dom'
 

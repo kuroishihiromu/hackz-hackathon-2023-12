@@ -11,10 +11,10 @@
 
 @keyframes pulse {
   0%, 100%{
-    opacity: 1;
+    background-color: rgb(248, 138, 189);    
   }
   50% {
-    opacity: 0.2;
+    background-color: rgb(210, 144, 175);
   }
 }
 

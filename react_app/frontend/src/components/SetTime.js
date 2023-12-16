@@ -28,7 +28,7 @@ const SetTime = () => {
     };
 
     return (
-        <div className="w-[80%] mx-auto bg-red rounded-[12px]  px-10 py-3 bg-[#b8a1c5] text-center shadow-lg">
+        <div className="w-[80%] mx-auto bg-red rounded-[12px]  px-10 py-3 bg-[#b8a1c5] text-center shadow-lg mb-20">
             <button onClick={handleSetTimeToggle} className="text-[18px] text-white px-2 py-1 font-semibold">時間を設定</button>
             {showForm && (
                 <div className="text-[16px] mt-2 ">

@@ -1,9 +1,9 @@
-// WakeUpTree.js
 import React, { useEffect, useState } from 'react';
 import WakeUpNode from './WakeUpNode';
 import AnimatedCurve from './AnimatedCurve';
 
 const WakeUpTree = () => {
+  
   const [nodesData, setNodesData] = useState([
     { node_id: 1, wakeup: false, edge: 0 },
     { node_id: 2, wakeup: false, edge: 1 },
@@ -20,8 +20,6 @@ const WakeUpTree = () => {
     { node_id: 13, wakeup: false, edge: 6 },
     { node_id: 14, wakeup: false, edge: 7 },
     { node_id: 15, wakeup: false, edge: 7 },
-
-    // Add more nodes as needed
   ]);
 
   const calcNodePosition = (nodeId) => {
@@ -56,18 +54,21 @@ const WakeUpTree = () => {
         return { left: '85%', top: '40%' };
       case 15:
         return { left: '95%', top: '50%' };
+      default:
+        return { left: '50%', top: '50%' };
     }
   };
 
+  const [simulatedNodeId, setSimulatedNodeId] = useState(null)
+
   useEffect(() => {
-    // Simulating data updates from socket
+    // ソケットからのデータ更新をシミュレート
     const simulatedDataUpdate = [
-      {node_id: 11, wakeup: true,},
-      {node_id: 12, wakeup: true,},
-      {node_id: 13, wakeup: true,},
-      {node_id: 1, wakeup: true,}
-    ]
-    ;
+      { node_id: 3, wakeup: true },
+    ];
+
+    const nodeId = simulatedDataUpdate[0]?.node_id
+    setSimulatedNodeId(nodeId)
 
     const updatedNodesData = nodesData.map((node) => {
       const update = simulatedDataUpdate.find((update) => update.node_id === node.node_id);
@@ -81,17 +82,20 @@ const WakeUpTree = () => {
     if (JSON.stringify(nodesData) !== JSON.stringify(updatedNodesData)) {
       setNodesData(updatedNodesData);
     }
-
   }, [nodesData]);
 
   return (
     <>
-      <div className='w-[80%] h-[500px] mx-auto relative z-10'>
+      <div className='w-[80%] h-[500px] mx-auto relative z-10 mb-20'>
         {nodesData.map((node, index) => {
           const { left, top } = calcNodePosition(node.node_id);
-          return <WakeUpNode key={index} label={node.node_id} wakeup={node.wakeup} edge={node.edge} left={left} top={top} />;
+          return (
+            <React.Fragment key={index}>
+              <WakeUpNode label={node.node_id} wakeup={node.wakeup} edge={node.edge} left={left} top={top} />
+              <AnimatedCurve render_index={simulatedNodeId} />
+            </React.Fragment>
+          );
         })}
-        <AnimatedCurve/>
       </div>
     </>
   );
