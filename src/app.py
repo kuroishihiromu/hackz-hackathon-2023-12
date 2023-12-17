@@ -305,35 +305,35 @@ def get_depth_level(device_id):
         : Process.query.filter(Process.process_id == tree_manager.process_id).order_by(Process.create_at.desc()).first().depth_level
     })
     
-@app.route('/get_tree_img')
-def get_tree_img():
-    data = request.get_json()
-    user_id = int(data['user_id'])
+# @app.route('/get_tree_img')
+# def get_tree_img():
+#     data = request.get_json()
+#     user_id = int(data['user_id'])
     
-    # 今日の日付 
-    today = datetime.now().strftime('%Y%m%d')
+#     # 今日の日付 
+#     today = datetime.now().strftime('%Y%m%d')
     
-    # 指定された日付のファイルを検索
-    file_pattern = "./tree_logs/{}_trees_*.pkl".format(today)
-    file_list = glob.glob(file_pattern)
+#     # 指定された日付のファイルを検索
+#     file_pattern = "./tree_logs/{}_trees_*.pkl".format(today)
+#     file_list = glob.glob(file_pattern)
 
-    # ファイルが存在する場合、最新のファイルを見つける
-    if file_list:
-        latest_file = max(file_list, key=os.path.getmtime)
-        print(f"Using the latest file: {latest_file}")
+#     # ファイルが存在する場合、最新のファイルを見つける
+#     if file_list:
+#         latest_file = max(file_list, key=os.path.getmtime)
+#         print(f"Using the latest file: {latest_file}")
 
-        # 最新のファイルからtree_managersを読み込む
-        with open(latest_file, 'rb') as f:
-            loaded_object = pickle.load(f)
-    else:
-        print(f"No files found for pattern: {file_pattern}")
+#         # 最新のファイルからtree_managersを読み込む
+#         with open(latest_file, 'rb') as f:
+#             loaded_object = pickle.load(f)
+#     else:
+#         print(f"No files found for pattern: {file_pattern}")
         
-    for tree_manager in loaded_object:
-        print(tree_manager.user_id_list)
-        if user_id in tree_manager.user_id_list:
-            break
-            
-    return tree_manager.get_tree_img()
+#     for tree_manager in loaded_object:
+#         print(tree_manager.user_id_list)
+#         if user_id in tree_manager.user_id_list:
+#             break
+
+#     return tree_manager.get_tree_img()
 
 
 if __name__ == '__main__':

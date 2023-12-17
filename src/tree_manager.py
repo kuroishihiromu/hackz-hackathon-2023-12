@@ -272,6 +272,6 @@ class TreeManager:
 
         return nodes_data
 
-    def get_tree_img():
-        nx.draw_networkx(self.tree)
-        plt.show
+    # def get_tree_img():
+    #     nx.draw_networkx(self.tree)
+    #     plt.show
