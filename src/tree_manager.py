@@ -8,7 +8,7 @@ import pickle
 import random
 import threading
 from database.threading_db_conector import DBConnector
-
+from matplotlib import pyplot as plt
 
 class TreeManager:
     def __init__(self,Cluster):
@@ -269,6 +269,9 @@ class TreeManager:
         # nodes_dataからwakeupがTrueのものを抽出
         nodes_data = [line for line in nodes_data if line["wakeup"]]
 
+
         return nodes_data
 
-
+    # def get_tree_img():
+    #     nx.draw_networkx(self.tree)
+    #     plt.show
