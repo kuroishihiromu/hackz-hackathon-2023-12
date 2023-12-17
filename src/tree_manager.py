@@ -260,8 +260,6 @@ class TreeManager:
                 line["wakeup"] = True
             else:
                 line["wakeup"] = False
-            print("self.user_id_list", self.user_id_list)
-            print("node_id:", line["node_id"])
 
 
         # nodes_dataからwakeupがTrueのものを抽出
