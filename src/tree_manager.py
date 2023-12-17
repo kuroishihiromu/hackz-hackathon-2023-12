@@ -20,7 +20,9 @@ class TreeManager:
         self.tree_index = None
         self.sorted_users = []
         self.user_id_list = []
-    
+        # self.connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        # self.connector.setup()
+
     def create_tree(self,tree_index):
         
         self.tree_index = tree_index
@@ -213,17 +215,18 @@ class TreeManager:
             { "node_id": 15, "wakeup": False, "edge": 7 }
         ]
         
-        connector = DBConnector('mysql://user:password@db:3306/mydatabase')
-        connector.setup()
+        # connector = DBConnector('mysql://user:password@db:3306/mydatabase')
+        # connector.setup()
         
         # DB接続のセットアップ
         connector = DBConnector('mysql://user:password@db:3306/mydatabase')
         connector.setup()
 
+        # def get_parent_node(graph, node_id):
         def get_parent_node(graph, node_id):
-
             # ノードの親ノードを取得
-            parents = graph.predecessors(node)[0]
+            # parents = graph.predecessors(node)[0]
+            parents = list(graph.predecessors(node_id))
             
             # 親が存在する場合は親ノードを返す
             if parents:
@@ -251,13 +254,13 @@ class TreeManager:
         # 各ノードの状態を更新
         print(nodes_data)
         for line in nodes_data:
-            print(line)
-            user_tmp = connector.get_user(self.user_id_list[line["node_id"]-1])
+            # print(line)
+            user_tmp = connector.get_user(self.user_id_list[line["node_id"]]-1)
             if user_tmp.status and can_reach_root(user_tmp.id):
                 line["wakeup"] = True
             else:
                 line["wakeup"] = False
-            print("user_id_list:", self.user_id_list)
+            print("self.user_id_list", self.user_id_list)
             print("node_id:", line["node_id"])
 
 
