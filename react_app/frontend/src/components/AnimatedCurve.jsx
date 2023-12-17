@@ -55,6 +55,7 @@ const AnimatedCurve = (props) => {
 
     setPathsData((prevPathsData) => {
       return prevPathsData.map((path, index) => {
+        console.log(path,index)
         return {
           ...path,
           render: selectedPathIndices.includes(index)

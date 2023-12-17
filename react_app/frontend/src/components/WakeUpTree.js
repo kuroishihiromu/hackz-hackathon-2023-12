@@ -63,20 +63,20 @@ const WakeUpTree = () => {
 
   useEffect(() => {
     // ソケットからのデータ更新をシミュレート
-    let simulatedDataUpdate = [];
+
     const fetchData = async () => {
       try{
       
         const user_id = sessionStorage.getItem('userid')
-    
+
         if(user_id){
           const response = await axios.post('http://localhost:5000/tree_state', {user_id})
           const responseData = response.data
-    
-          simulatedDataUpdate = [{node_id:responseData["node_id"], wakeup:responseData["wakeup"]}]
+          const simulatedDataUpdate = [...responseData]
+          // console.log(responseData)
+          // simulatedDataUpdate = [{node_id:responseData["node_id"], wakeup:responseData["wakeup"]}]
           const nodeId = simulatedDataUpdate[0]?.node_id
           setSimulatedNodeId(nodeId)
-      
           const updatedNodesData = nodesData.map((node) => {
             const update = simulatedDataUpdate.find((update) => update.node_id === node.node_id);
             if (update && node.wakeup !== update.wakeup) {
@@ -101,7 +101,7 @@ const WakeUpTree = () => {
 
     const intervalId = setInterval(() => {
       fetchData()
-    }, 5000)
+    }, 10000)
     
   }, [nodesData]);
 

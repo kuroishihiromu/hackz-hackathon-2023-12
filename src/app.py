@@ -206,7 +206,7 @@ def set_time():
 def tree_state():
 
     data = request.get_json()
-    user_id = data['user_id']
+    user_id = int(data['user_id'])
     
     # 今日の日付 
     today = datetime.now().strftime('%Y%m%d')
@@ -227,6 +227,7 @@ def tree_state():
         print(f"No files found for pattern: {file_pattern}")
         
     for tree_manager in loaded_object:
+        print(tree_manager.user_id_list)
         if user_id in tree_manager.user_id_list:
             break
     
