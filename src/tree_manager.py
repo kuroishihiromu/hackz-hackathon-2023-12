@@ -240,24 +240,28 @@ class TreeManager:
                 return True
                 
             predecessors = list(self.tree.predecessors(node_id))
+                
             if predecessors:
                 parent_node_id = predecessors[0]
             else:
                 # リストが空の場合の処理
-                parent_node_id = None  # またはエラーを発生させるか、デフォルト値を設定するなど
+                return False
+                # parent_node_id = None  # またはエラーを発生させるか、デフォルト値を設定するなど
 
-            if parent_node_id and connector.get_user(parent_node_id):
+            print("nodeid -> ",node_id,": ", parent_node_id)
+            parent_user_temp = connector.get_user(self.user_id_list[parent_node_id-1])
+            if parent_node_id and parent_user_temp.status:
                 return can_reach_root(parent_node_id)
             else:
                 return False
 
         # 各ノードの状態を更新
-        print(nodes_data)
+        # print(nodes_data)
         for line in nodes_data:
-            # print(line)
             user_tmp = connector.get_user(self.user_id_list[line["node_id"]-1])
-            if user_tmp.status and can_reach_root(user_tmp.id):
+            if user_tmp.status and can_reach_root(line["node_id"]):
                 line["wakeup"] = True
+                print(line)
             else:
                 line["wakeup"] = False
 
