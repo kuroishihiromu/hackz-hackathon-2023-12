@@ -226,7 +226,7 @@ class TreeManager:
         def get_parent_node(graph, node_id):
             # ノードの親ノードを取得
             # parents = graph.predecessors(node)[0]
-            parents = list(graph.predecessors(node_id))
+            parents = list(graph.predecessors(node_id))[0]
             
             # 親が存在する場合は親ノードを返す
             if parents:
@@ -255,7 +255,7 @@ class TreeManager:
         print(nodes_data)
         for line in nodes_data:
             # print(line)
-            user_tmp = connector.get_user(self.user_id_list[line["node_id"]]-1)
+            user_tmp = connector.get_user(self.user_id_list[line["node_id"]-1])
             if user_tmp.status and can_reach_root(user_tmp.id):
                 line["wakeup"] = True
             else:
